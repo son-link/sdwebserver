@@ -2,6 +2,8 @@
 
 A webserver for [Speed-Dreams](https://speed-dreams.net)
 
+Based on the original web server by @madbad https://github.com/madbad/sdwebserver
+
 This server stores the statistics of each race of the registered players. 
 
 Along each page you will be able to see the statistics of each player: his races, personal bests in each race, track and car information, the time he made within the game, lap statistics, etc.

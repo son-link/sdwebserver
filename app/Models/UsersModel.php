@@ -350,24 +350,29 @@ class UsersModel extends Model
 			'msg'	=> ''
 		];
 
-		unset($data['passwordcheck']);
-		unset($data['phrase']);
+		$user = [
+			'username'	=> $data['username'],
+			'email'		=> $data['email'],
+			'nation'	=> $data['nation'],
+			'username'	=> $data['username'],
+		];
 
 		// First verify if the user or email
 		$sql = $this->db->table('users');
-		$sql->where('username', $data['username']);
-		$sql->orWhere('email', $data['email']);
+		$sql->where('username', $user['username']);
+		$sql->orWhere('email', $user['email']);
 		$query = $sql->get(1);
+		
 		if ($query && $query->getNumRows() == 1){
 			$response['msg'] = 'Username and/or email are registered';
 		}
 		else
 		{
 			// Encrypt the password
-			$data['password'] = password_hash($data['password'], self::HASH, [self::COST]);
-			
+			$user['password'] = password_hash($data['password'], self::HASH, [self::COST]);
+			unset($data);
 			// Insert data
-			$sql->insert($data);
+			$sql->insert($user);
 			$error = $this->db->error();
 			if ($error['code'] != 0)
 			{
@@ -378,7 +383,7 @@ class UsersModel extends Model
 				$id = $this->db->insertID();
 				$sql->resetQuery();
 				// Move the file to it's new home
-				$filename =  $data['username'] . '.' . $image->getExtension();
+				$filename =  $user['username'] . '.' . $image->getExtension();
 				$image->move(FCPATH . '/img/users/', $filename);
 				$sql->where('id', $id)->update(['img' => $filename]);
 				$response['ok'] = true;

@@ -2,10 +2,7 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
-
-use function PHPUnit\Framework\returnSelf;
 
 class Webserver extends BaseController
 {
@@ -22,8 +19,6 @@ class Webserver extends BaseController
 		if (!$data) return $this->failValidationError('No data received');
 
         $xml = xmlObj($data);
-
-		log_message('info', json_encode($xml));
 
 		$webserverversion= 1;
 		$string='<?xml version="1.0" encoding="UTF-8"?>

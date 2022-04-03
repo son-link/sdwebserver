@@ -258,14 +258,14 @@
 						<option>Zambia</option>
 						<option>Zimbabwe</option>
 					</select>
-					<img id="flagimg" src="/img/flags/flags_medium/Afghanistan.png" />
+					<img id="flagimg" src="<?= base_url() ?>/img/flags/flags_medium/Afghanistan.png" />
 				</div>
 			</div>
 
 			<div class="register-right">
 				<label>Profile image</label>
 				<input type="file" name="imginput" id="imginput" required />
-				<img src="/img/user.svg" id="profile-img">
+				<img src="<?= base_url() ?>/img/user.svg" id="profile-img">
 
 				<label>Resolve the captcha</label>
 				<div id="captcha-box">

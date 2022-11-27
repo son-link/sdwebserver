@@ -29,15 +29,19 @@ class Races extends BaseController
 			$builder = $this->db->table('laps');
 			$builder->where('race_id', $tplData['race']->id);
 			$query = $builder->get();
-
+			
+			$tplData['race']->n_laps = 0;
 			if ($query && $query->getNumRows() > 0)
 			{
 				$tplData['laps'] = json_encode($query->getResult());
-				$tplData['user'] = new UsersModel($tplData['race']->user_id);
-				$tplData['car'] = new CarsModel(getCar($tplData['race']->car_id));
-				$tplData['track'] = new TracksModel(getTrack($tplData['race']->track_id));
+				$tplData['race']->n_laps = $query->getNumRows();
 			}
+
+			$tplData['user'] = new UsersModel($tplData['race']->user_id);
+			$tplData['car'] = new CarsModel(getCar($tplData['race']->car_id));
+			$tplData['track'] = new TracksModel(getTrack($tplData['race']->track_id));
 		}
+
 		echo get_header('Races');
 		echo view('race', $tplData);
 		echo get_footer(['chart.min.js']);

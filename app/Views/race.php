@@ -30,11 +30,18 @@
 				<?= $user->getLink() ?>
 			</td>
 		</tr>
+		<tr>
+			<th>Laps completed:</th>
+			<td>
+				<?= $race->n_laps ?>
+			</td>
+		</tr>
 	</table>
 	<div>
   		<canvas id="chart"></canvas>
 	</div>
 </div>
+<?php if (!empty($laps)): ?>
 <script type="text/javascript">
 	document.addEventListener("DOMContentLoaded", () => {
 		let lapsData = JSON.parse('<?= $laps ?>');
@@ -129,3 +136,4 @@
 	});
 	
 </script>
+<?php endif ?>

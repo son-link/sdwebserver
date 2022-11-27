@@ -582,11 +582,11 @@ sd-carcategoryselection {
 	}
 
 	#open-menu {
-		background-image: url(/img/menu.svg);
+		background-image: url('/img/menu.svg');
 	}
 
 	#close-menu {
-		background-image: url(/img/backburger.svg);
+		background-image: url('/img/backburger.svg');
 	}
 	
 	#menu {

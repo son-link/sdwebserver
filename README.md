@@ -24,5 +24,3 @@ To run the server you will need a web server with PHP and a MySQL or MariaDB dat
 * Finally you must create the necessary tables. Inside **sdwebserver.sql** you will find the statements to create them. Sole you must import it from PhpMyAdmin or any other application you use (or your hosting provider uses).
 
 Once you have followed these steps you only have to upload all the content to your web hosting and it will be ready to work.
-
-Translated with www.DeepL.com/Translator (free version)

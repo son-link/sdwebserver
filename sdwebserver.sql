@@ -6,7 +6,7 @@ CREATE TABLE `laps` (
   `position` int(5) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
   `wettness` int(2) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8_general_ci;
+) ENGINE=MyISAM;
 
 CREATE TABLE `races` (
   `id` int(11) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE `races` (
   `endposition` int(5) DEFAULT NULL,
   `sdversion` varchar(100) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=MyISAM DEFAULT CHARSET=utf8_general_ci;
+) ENGINE=MyISAM;
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE `users` (
   `sessionid` varchar(50) DEFAULT NULL,
   `sessionip` varchar(15) DEFAULT NULL,
   `sessiontimestamp` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8_general_ci;
+) ENGINE=MyISAM;
 
 ALTER TABLE `laps`
   ADD PRIMARY KEY (`id`);
@@ -54,3 +54,15 @@ ALTER TABLE `races`
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
+
+CREATE TABLE IF NOT EXISTS `cars_cats` (
+	`id` varchar(20) DEFAULT NULL,
+	`name` varchar(50) DEFAULT NULL,
+	`carID` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `tracks_cats` (
+	`id` varchar(20) DEFAULT NULL,
+	`name` varchar(50) DEFAULT NULL,
+	`trackID` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB;

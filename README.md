@@ -11,7 +11,7 @@ Along each page you will be able to see the statistics of each player: his races
 ## Installation
 
 ### Requirements
-To run the server you will need a web server with PHP and a MySQL or MariaDB database installed.
+To run the server you will need a web server with PHP (8.1 or newer) and a MySQL or MariaDB database installed.
 
 * Download the code or clone the repository.
 * You have to edit 2 files before uploading to the server:

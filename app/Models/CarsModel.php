@@ -1,27 +1,29 @@
 <?php
 namespace App\Models;
+use App\Models\BaseModel;
 
-class CarsModel
+class CarsModel extends BaseModel
 {
-	public function __construct($car)
+	private $data;
+
+	protected $table      = 'cars';
+
+	protected $allowedFields = ['id', 'name', 'img', 'category', 'width', 'length', 'mass', 'fueltank', 'engine', 'drivetrain'];
+
+	/*
+	public function __construct($car=null)
 	{
-		$this->import($car);
+		if ($car) $this->data = $this->data($car);
 	}
 
-	public function import($properties){    
-		foreach($properties as $key => $value)
-		{
-			$this->{$key} = $value;
-		}
-    }
-	public function getLink($text='')
+	public function getLink(string $text=null): string
 	{
-		if($text == '') $text = $this->username;
-		return "<a href='". base_url() . "'/car/{$this->id}'>$text</a>";
+		if(!$text) $text = $this->data->name;
+		return "<a href='". base_url() . "'/car/{$this->data->id}'>$text</a>";
 	}
 
-	public function card($text='') {
-		return $this->name.$this->img;
+	public function card() {
+		return $this->data->name . $this->data->img;
 	}
 
 	public function imgTag()
@@ -54,4 +56,5 @@ class CarsModel
 		$content = $this->name . '<br />' . $this->imgTag();
 		return "<a href='" . base_url() . "/car/{$this->id}'>$content</a>";
 	}
+	*/
 }

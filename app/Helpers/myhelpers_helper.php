@@ -4,7 +4,7 @@ use App\Models\UsersModel;
 use App\Models\TracksModel;
 use App\Models\CarsModel;
 
-function get_header($title, $css=[])
+function get_header($title, $css=[], $dasboard=false)
 {
 	if (!is_array($css)) $css = [];
 	$data = [
@@ -12,12 +12,13 @@ function get_header($title, $css=[])
 		'custom_css'	=> $css,
 	];
 
+	if ($dasboard) return view('dashboard/header', $data);
 	return view('templates/header', $data);
 }
 
 /**
  * Esta función muestra la plantilla del pie de la página.
- * @param Array $css Un array con los scripts opcionales.
+ * @param array $js Un array con los scripts opcionales.
  * @return * La vista del pie o false en caso de error.
  */
 function get_footer($js=[])
@@ -29,18 +30,18 @@ function get_footer($js=[])
 
 /* ================================================
  * make xml data saveable on database
- * 
+ *
  * ================================================*/
  /**
-    @param:
-        $xml: SimpleXMLElement
-        $force: set to true to always create 'text', 'attribute', and 'children' even if empty
-    @return
-        object with attributs:
-            (string) name: XML tag name
-            (string) text: text content of the attribut name
-            (array) attributes: array witch keys are attribute key and values are attribute value
-            (array) children: array of objects made with xml2obj() on each child
+	@param:
+		$xml: SimpleXMLElement
+		$force: set to true to always create 'text', 'attribute', and 'children' even if empty
+	@return
+		object with attributs:
+			(string) name: XML tag name
+			(string) text: text content of the attribut name
+			(array) attributes: array witch keys are attribute key and values are attribute value
+			(array) children: array of objects made with xml2obj() on each child
 **/
 function xmlObj($xmlstring)
 {
@@ -50,6 +51,7 @@ function xmlObj($xmlstring)
 ###################################
 ## extract content of a json txt file an d return an object of the json string
 ###################################
+/*
 function jsonTxtFileToObj($fileUrl, $objClass)
 {
 	$myfile = fopen($fileUrl, "r") or die("Unable to open file!");
@@ -104,19 +106,16 @@ function getTrackCats()
 {
 	return jsonTxtFileToObj(WRITEPATH . "/data/trackCategories.txt", 'TrackCategory');
 }
-
-###################################
-## 
-###################################
+*/
 function secondsToTime($seconds)
 {
 	/*
-    $dtF = new DateTime("@0");
-    $dtT = new DateTime("@$seconds");
-    return $dtF->diff($dtT)->format('%a d, %h hr, %i min, %s sec');
-    */
+	$dtF = new DateTime("@0");
+	$dtT = new DateTime("@$seconds");
+	return $dtF->diff($dtT)->format('%a d, %h hr, %i min, %s sec');
+	*/
 	if ($seconds == 0) return 0;
-	
+
 	$date1 = new \DateTime("@0");
 	$date2 = new \DateTime("@$seconds");
 	$interval = $date1->diff($date2);
@@ -140,9 +139,6 @@ function secondsToTime($seconds)
 	return $str;
 }
 
-###################################
-## 
-###################################
 function formatLaptime($seconds)
 {
 	$seconds = $seconds *1;
@@ -150,7 +146,7 @@ function formatLaptime($seconds)
 
 	//minuti
 	$str.= sprintf('%02d', ($seconds/60)).':';
-	$seconds = fmod($seconds, 60); 
+	$seconds = fmod($seconds, 60);
 
 	//secondi
 	$str.=  sprintf('%02d',$seconds).'.';
@@ -162,9 +158,6 @@ function formatLaptime($seconds)
 	return $str;
 }
 
-###################################
-## 
-###################################
 function percentStr($smallvalue, $bigvalue)
 {
 	if($bigvalue==0) return '-%';
@@ -173,33 +166,24 @@ function percentStr($smallvalue, $bigvalue)
 	return $percent.'%';
 }
 
-###################################
-## 
-###################################
 function weatherTag($value)
 {
 	switch($value)
 	{
 		case 0:
 			return '<i class="wi wi-day-sunny"></i>';
-			break;
 		case 1:
 			return '<i class="wi wi-rain"></i>';
-			break;
 		case 2:
 			return '<i class="wi wi-rain"></i>';
-			break;
 		case 3:
 			return '<i class="wi wi-rain"></i>';
-			break;		
 	}
 }
 
-###################################
-## 
-###################################
-//this will rewrite the current url 
-//and modify the given param if needed
+
+// This will rewrite the current url
+// and modify the given param if needed
 function rewriteUrl($paramName, $paramValue)
 {
 	$query = $_GET;
@@ -208,10 +192,10 @@ function rewriteUrl($paramName, $paramValue)
 	// rebuild url
 	$query_result = http_build_query($query);
 	// new link
-	return base_url().'?'.$query_result;
+	return base_url() . '?' .$query_result;
 }
 
-
+/*
 function getCar($carId)
 {
 	$cars = getCars();
@@ -256,7 +240,7 @@ function getTrack($trackId)
 		return $fakeTrack;
 	}
 }
-
+*/
 function generateConditions($conditions, $separator = ',')
 {
 	$txt='';
@@ -275,37 +259,43 @@ function generateConditions($conditions, $separator = ',')
 
 	return $txt;
 }
-
+/*
 class CarCategory
 {
-	function CarCategory($category){
+	function category($category)
+	{
 		$this->import($category);
 	}
-	
-    public function import($properties){    
+
+	public function import($properties){
 		foreach($properties as $key => $value){
 			$this->{$key} = $value;
 		}
-    }
+	}
 }
 
 class TrackCategory
 {
-	function TrackCategory($category){
+	function category($category){
 		$this->import($category);
 	}
-    public function import($properties){    
+	public function import($properties){
 		foreach($properties as $key => $value){
 			$this->{$key} = $value;
 		}
-    }
+	}
 }
+*/
 
-function racetype($num){
+function racetype($num)
+{
 	switch ($num){
-		case 0: return 'practice';break;
-		case 1: return 'qualify';break;
-		case 2: return 'race';break;
+		case 0:
+			return 'practice';
+		case 1:
+			return 'qualify';
+		case 2:
+			return 'race';
 	}
 }
 
@@ -333,12 +323,8 @@ function getBestTimesTrack($trackId)
 	$builder->where('r.track_id', $trackId);
 	$builder->orderBy('l.laptime');
 	$query = $builder->get(10);
-		
-	if (!$query || $query->getNumRows() == 0)
-	{
-		echo "No laps to show for this tracks";
-		return [];
-	}
+
+	if (!$query || $query->getNumRows() == 0) return [];
 
 	return $query->getResult();
 }
@@ -352,4 +338,104 @@ function getCarBetsLaps($carId)
 	WHERE r.car_id = '$carId'
 	GROUP BY r.id
 	ORDER BY l.laptime";
+}
+
+function getOS() {
+
+	$user_agent = $_SERVER['HTTP_USER_AGENT'];
+	log_message('debug', "HTTP_USER_AGENT: $user_agent");
+	$os_platform = "Unknown Operative System";
+	$os_array = array(
+		'/windows nt 10/i'		=>  'Windows 10',
+		'/windows nt 6.3/i'		=>  'Windows 8.1',
+		'/windows nt 6.2/i'		=>  'Windows 8',
+		'/windows nt 6.1/i'     =>  'Windows 7',
+		'/windows nt 6.0/i'		=>  'Windows Vista',
+		'/windows nt 5.2/i'		=>  'Windows Server 2003/XP x64',
+		'/windows nt 5.1/i'		=>  'Windows XP',
+		'/windows xp/i'			=>  'Windows XP',
+		'/windows nt 5.0/i'		=>  'Windows 2000',
+		'/windows me/i'			=>  'Windows ME',
+		'/win98/i'				=>  'Windows 98',
+		'/win95/i'				=>  'Windows 95',
+		'/win16/i'				=>  'Windows 3.11',
+		'/macintosh|mac os x/i' =>  'Mac OS X',
+		'/mac_powerpc/i'		=>  'Mac OS 9',
+		'/linux/i'				=>  'Linux',
+		'/ubuntu/i'				=>  'Ubuntu',
+		'/iphone/i'				=>  'iPhone',
+		'/ipod/i'				=>  'iPod',
+		'/ipad/i'				=>  'iPad',
+		'/android/i'			=>  'Android',
+		'/blackberry/i'			=>  'BlackBerry',
+		'/webos/i'				=>  'Mobile',
+		'/libcurl-agent/i'		=>  'Unknown (Curl)'
+	);
+
+	foreach ( $os_array as $regex => $value )
+		if ( preg_match($regex, $user_agent ) ) $os_platform = $value;
+
+	log_message('debug', "Operative System: $os_platform");
+	return $os_platform;
+}
+
+/**
+ * Returns if the current user if log in
+ * @return bool The user level if logged in
+ */
+function ifLoggedIn(): bool
+{
+	//$db = \Config\Database::connect();
+	$session = session();
+	if ($session->get('logged_in')) return true;
+	return false;
+}
+
+function findObjectById($array, $id)
+{
+	foreach ( $array as $element )
+	{
+		if ( $id == $element->id ) return true;
+	}
+
+	return false;
+}
+
+function imgTag(string $img, string $width, string $title): string
+{
+	$img = str_replace('./', '/', $img);
+	$url = base_url($img);
+	return "<img width='$width' src='$url' alt='$title' title='$title'>";
+}
+
+function imgTagFull(string $img, string $class, string $alt)
+{
+	$img = str_replace('./', '/', $img);
+	$url = base_url($img);
+	return "<img src='$url' class='$class' alt='$alt'>";
+}
+
+function clickableName(string $id, string $type, string $content): string
+{
+	return linkTag($id, $type, $content);
+}
+
+function clickableImgTag(string $id, string $size, string $type, string $title): string
+{
+	return linkTag($id, $type, imgTag($id, $size, $title));
+}
+
+function linkTag(string $id, string $type , string $content): string
+{
+	$url = base_url("$type/$id");
+	return "<a href='$url'>$content</a>";
+}
+
+function linkTitleImgTag(string $id, string $type, string $name, string $img): string
+{
+	if ($type != 'car' && $type != 'track') return '';
+
+	$url = base_url("$type/$id");
+	$content = $name . '<br />' . imgTag($img, '80px', $name);
+	return "<a href='$url'>$content</a>";
 }

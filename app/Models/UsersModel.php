@@ -1,30 +1,55 @@
 <?php
 namespace App\Models;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 use App\Models\CarsModel;
+use App\Models\TracksModel;
 
-class UsersModel extends Model
+class UsersModel extends BaseModel
 {
+	protected $table      = 'users';
+	protected $allowedFields = ['username', 'email', 'password',  'img', 'nation', 'registrationdate',
+		'sessionid', 'sessionip', 'sessiontimestamp', 'level'
+	];
+
 	public $id;
-	protected $db;
+
 	protected $raceTypes;
+
+	private $carsModel;
+
+	private $tracksModel;
+
+	private $session;
+
+	private $user;
+
 	const HASH = PASSWORD_DEFAULT;
 	const COST = 16;
 
-	public function __construct($id = null)
+	public function initialize()
 	{
-		$this->db = \Config\Database::connect();
-		$this->id = $id;
+		$this->session = \Config\Services::session();
+		$this->carsModel = new CarsModel();
+		$this->tracksModel = new TracksModel();
 
 		$this->raceTypes = new \stdClass;
 		$this->raceTypes->practice = 0; 
 		$this->raceTypes->qualify = 1;
 		$this->raceTypes->race = 2;
+	}
 
-		if ($this->id){
-			$this->getFromDb();
-		}
+	/*
+	public function initialize()
+	{
+		$this->session = session();
+		$this->carsModel = new CarsModel;
+		$this->tracksModel = new TracksModel;
+
+		$this->raceTypes = new \stdClass;
+		$this->raceTypes->practice = 0; 
+		$this->raceTypes->qualify = 1;
+		$this->raceTypes->race = 2;
 	}
 
 	public function getUsers()
@@ -35,18 +60,22 @@ class UsersModel extends Model
 		if ($query && $query->getNumRows() > 0) $users = $query->getResult();
 		return $users;
 	}
-
+	*/
 	public function getUser($username)
 	{
-		$builder = $this->db->table('users');
-		$builder->select('id');
+		$builder = $this->builder();
+		$builder->select('id, email, username, nation, img');
 		$builder->where('username', $username);
 		$query = $builder->get(1);
 
 		if ($query && $query->getNumRows() == 1)
 		{
-			return $query->getRow()->id;
-		}
+			$data = $query->getRow();
+			$this->id = $data->id;
+			$data->flag = str_replace(' ', '_', $data->nation) . '.png';
+			return $data;
+		} 
+
 		return false;
 	}
 
@@ -54,11 +83,11 @@ class UsersModel extends Model
 	 * Check if the user and/or email is already in use.
 	 * @param string $username The username to check.
 	 * @param string $email The email to check.
-	 * @return Boolean False if the username and email are not in use
+	 * @return boolean False if the username and email are not in use
 	 */
 	public function compUser($username, $email)
 	{
-		$builder = $this->db->table('users');
+		$builder = $this->builder();
 		$builder->select('id');
 		$builder->where('username', $username);
 		$builder->orWhere('email', $email);
@@ -72,6 +101,7 @@ class UsersModel extends Model
 		return false;
 	}
 
+	/*
     private function import($properties)
 	{    
 		foreach($properties as $key => $value){
@@ -103,29 +133,34 @@ class UsersModel extends Model
 	public function getLink($text='')
 	{
 		if ($text == '') $text=$this->username;
-		return "<a href='" . base_url() . "/user/{$this->username}'>$text</a>";
+		return "<a href='" . base_url() . "user/{$this->username}'>$text</a>";
 	}
 
 	public function getSmallFlagImg()
 	{		
-		return "<img src='" . base_url() . "/img/flags/flags_small/{$this->flag}' alt='{$this->nation}'>";
+		return "<img src='" . base_url() . "img/flags/flags_small/{$this->flag}' alt='{$this->nation}'>";
 	}
 
 	public function getMediumFlagImg()
 	{
-		return "<img src='" . base_url() . "/img/flags/flags_medium/{$this->flag}' alt='{$this->nation}'>";
+		return "<img src='" . base_url() . "img/flags/flags_medium/{$this->flag}' alt='{$this->nation}'>";
 	}
 
 	public function getImgFile()
 	{
-		return "<img class='avatar' src='" . base_url() . "/img/users/{$this->img}' alt='{$this->username}'>";
+		return "<img class='avatar' src='" . base_url() . "img/users/{$this->img}' alt='{$this->username}'>";
 	}
 
+	*/
 	public function getRaceSessions()
 	{
-		$builder = $this->db->table('races');
-		$builder->where('user_id', $this->id);
-		$builder->orderBy('id DESC');
+		$builder = $this->db->table('races r');
+		$builder->select('r.id, r.user_skill, r.track_id, r.car_id, r.startposition, r.endposition');
+		$builder->select('r.sdversion, r.timestamp, r.type, t.name as track_name, c.name as car_name');
+		$builder->join('tracks t', 't.id = r.track_id');
+		$builder->join('cars c', 'c.id = r.car_id');
+		$builder->where('r.user_id', $this->id);
+		$builder->orderBy('r.id DESC');
 		$query = $builder->get();
 
 		if ($query && $query->getNumRows() > 0) return $query->getResult();
@@ -246,7 +281,7 @@ class UsersModel extends Model
 		$data = new \stdClass;
 		if ($query && $query->getNumRows() > 0)
 		{
-			$data->car = new CarsModel(getCar($query->getRow()->car_id));
+			$data->car = $this->carsModel->find($query->getRow()->car_id);
 			$data->total = $query->getRow()->count;
 		}
 		return $data;
@@ -255,48 +290,52 @@ class UsersModel extends Model
 	public function getMostUsedTrack()
 	{
 		$builder = $this->db->table('races');
-		$builder->select('track_id, COUNT(*) as count');
+		$builder->select('track_id, COUNT(*) AS total');
 		$builder->where([
 			'user_id'	=> $this->id
 		]);
-		$builder->orderBy('count', 'desc');
+		$builder->orderBy('total', 'desc');
 		$builder->groupBy('track_id');
 
 		$query = $builder->get(1);
 
 		$data = new \stdClass;
+		
 		if ($query && $query->getNumRows() > 0)
 		{
-			$data->track = new TracksModel(getTrack($query->getRow()->track_id));
-			$data->total = $query->getRow()->total;
+			$result = $query->getRow();
+			log_message('debug', json_encode($result));
+			$data->track = $this->tracksModel->find($result->track_id);
+			$data->total = $result->total;
 		}
 		return $data;
 	}
 
 	public function getTimeOnTracks()
 	{
-		$builder = $this->db->table('laps A');
-		$builder->selectSum('A.laptime');
-		$builder->join('races B', 'ON A.race_id = B.id');
+		$builder = $this->db->table('laps l');
+		$builder->selectSum('l.laptime');
+		$builder->join('races r', 'l.race_id = r.id');
 		$builder->where([
-			'B.user_id'	=> $this->id
+			'r.user_id'	=> $this->id
 		]);
 		//$builder->orderBy('count', 'desc');
 
 		$query = $builder->get(1);
 
 		if ($query && $query->getNumRows() > 0) return $query->getRow()->laptime;
+		
 		return 0;
 	}
 
 	public function getTimeOnRace()
 	{
-		$builder = $this->db->table('laps A');
-		$builder->selectSum('A.laptime');
-		$builder->join('races B', 'ON A.race_id = B.id');
+		$builder = $this->db->table('laps l');
+		$builder->selectSum('l.laptime');
+		$builder->join('races r', 'l.race_id = r.id');
 		$builder->where([
-			'B.user_id'	=> $this->id,
-			'B.type'	=> $this->raceTypes->race
+			'r.user_id'	=> $this->id,
+			'r.type'	=> $this->raceTypes->race
 		]);
 		//$builder->orderBy('count', 'desc');
 
@@ -308,12 +347,12 @@ class UsersModel extends Model
 
 	public function getTimePractice()
 	{
-		$builder = $this->db->table('laps A');
-		$builder->selectSum('A.laptime');
-		$builder->join('races B', 'ON A.race_id = B.id');
+		$builder = $this->db->table('laps l');
+		$builder->selectSum('l.laptime');
+		$builder->join('races r', 'l.race_id = r.id');
 		$builder->where([
-			'B.user_id'	=> $this->id,
-			'B.type'	=> $this->raceTypes->practice
+			'r.user_id'	=> $this->id,
+			'r.type'	=> $this->raceTypes->practice
 		]);
 		//$builder->orderBy('count', 'desc');
 
@@ -325,12 +364,12 @@ class UsersModel extends Model
 
 	public function getTimeQualify()
 	{
-		$builder = $this->db->table('laps A');
-		$builder->selectSum('A.laptime');
-		$builder->join('races B', 'ON A.race_id = B.id');
+		$builder = $this->db->table('laps l');
+		$builder->selectSum('l.laptime');
+		$builder->join('races r', 'l.race_id = r.id');
 		$builder->where([
-			'B.user_id'	=> $this->id,
-			'B.type'	=> $this->raceTypes->qualify
+			'r.user_id'	=> $this->id,
+			'r.type'	=> $this->raceTypes->qualify
 		]);
 		//$builder->orderBy('count', 'desc');
 
@@ -354,14 +393,13 @@ class UsersModel extends Model
 			'username'	=> $data['username'],
 			'email'		=> $data['email'],
 			'nation'	=> $data['nation'],
-			'username'	=> $data['username'],
 		];
 
 		// First verify if the user or email
-		$sql = $this->db->table('users');
-		$sql->where('username', $user['username']);
-		$sql->orWhere('email', $user['email']);
-		$query = $sql->get(1);
+		$builder = $this->db->table('users');
+		$builder->where('username', $user['username']);
+		$builder->orWhere('email', $user['email']);
+		$query = $builder->get(1);
 		
 		if ($query && $query->getNumRows() == 1){
 			$response['msg'] = 'Username and/or email are registered';
@@ -372,24 +410,50 @@ class UsersModel extends Model
 			$user['password'] = password_hash($data['password'], self::HASH, [self::COST]);
 			unset($data);
 			// Insert data
-			$sql->insert($user);
+			$this->insert($user);
 			$error = $this->db->error();
-			if ($error['code'] != 0)
-			{
-				$resp['msg'] = 'An error ocurred on insert the new user to the database';
-			}
+
+			if ($error['code'] != 0) $response['msg'] = 'An error ocurred on insert the new user to the database';
 			else
 			{
 				$id = $this->db->insertID();
-				$sql->resetQuery();
+				//$builder->resetQuery();
 				// Move the file to it's new home
 				$filename =  $user['username'] . '.' . $image->getExtension();
 				$image->move(FCPATH . '/img/users/', $filename);
-				$sql->where('id', $id)->update(['img' => $filename]);
+				$this->where('id', $id)->update(['img' => $filename]);
 				$response['ok'] = true;
 			}
 		}
 
 		return $response;
+	}
+
+	public function login($data)
+	{
+		$builder = $this->builder();
+		$builder->select('id, password, level, username');
+		$builder->where('username', $data['username']);
+		$query = $builder->get(1);
+		if ($query && $query->getNumRows() == 1)
+		{
+			$user = $query->getRow();
+			if (password_verify($data['passwd'], $user->password))
+			{
+				$sessiondata = [
+					'userid'	=> $user->id,
+					'userlevel'	=> $user->level,
+					'username'	=> $user->username,
+					'logged_in'	=> true
+				];
+
+				$this->session->set($sessiondata);
+				return true;
+			}
+
+			return false;
+		}
+		
+		return false;
 	}
 }

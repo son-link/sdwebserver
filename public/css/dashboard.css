@@ -1,0 +1,44 @@
+body {
+	color: #4a4a4a;
+	margin: 0px;
+	padding:0px;
+	font-family: "Open Sans";
+	line-height: 1.5em;
+	font-size: 14px;
+}
+
+a {
+	color: #4a4a4a;
+	text-decoration: underline;
+	transition: all .3s ease
+}
+
+a:hover,
+a.selected {
+	color: #13aff0;
+}
+
+#dashmenu,
+header {
+	margin-top: 1rem;
+}
+
+/* Menu */
+
+#dashmenu a {
+	text-decoration: none;
+}
+
+/* Edit user */
+
+#user-edit-form label {
+	height: 30px;
+	line-height: 30px;
+	display: block;
+	padding: .2rem 0;
+	font-weight: bold;
+}
+
+#profile-img {
+	width: 128px;
+}

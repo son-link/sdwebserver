@@ -112,7 +112,7 @@ var $ = (function () {
    * @param {string} [display] Set the display [block, flex, inline-block, etc] (by default is block)
    *
    * @example $('#modal').show();
-   * @example $('.blocks').display('flex');
+   * @example $('.blocks').show('flex');
    */
   Constructor.prototype.show = function (display) {
     this.each(function (ele) {
@@ -271,7 +271,7 @@ var $ = (function () {
   };
 
   /**
-   * Trigger a event.
+   * Trigger a event for the element.
    * @param {eventname} event The event to trigger
    * @example $('#myform').trigger('submit')
    */

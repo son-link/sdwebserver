@@ -5,16 +5,16 @@ use App\Models\UsersModel;
 
 class Users extends BaseController
 {
-    protected $users;
+    protected object $usersModel;
 
 	public function __construct()
 	{
-		$this->users = new UsersModel();
+		$this->usersModel = new UsersModel();
 	}
 
     public function index()
     {
-		$users = $this->users->getUsers();
+		$users = $this->usersModel->findAll();
 		$tplData = [];
 		$tplData['users'] = $users;
 		echo get_header('Users');
@@ -25,17 +25,15 @@ class Users extends BaseController
 	public function user($username)
 	{
 		//$this->cachePage(3600);
-		$userid = $this->users->getUser($username);
-		$user = new UsersModel($userid);
-		unset($user->addUser);
-		$userraces = $user->getRaces();
-		$raceswon = $user->getWon();
-		$racespodiums = $user->getPodiums();
-		$racesretired = $user->getUnfinisced();
-		$practices = $user->getPractices();
-		$qualifies = $user->getQualifies();
+		$user = $this->usersModel->getUser($username);
+		$userraces = $this->usersModel->getRaces();
+		$raceswon = $this->usersModel->getWon();
+		$racespodiums = $this->usersModel->getPodiums();
+		$racesretired = $this->usersModel->getUnfinisced();
+		$practices = $this->usersModel->getPractices();
+		$qualifies = $this->usersModel->getQualifies();
 		$tplData = [
-			'raceSessions'			=> $user->getRaceSessions(),
+			'raceSessions'			=> $this->usersModel->getRaceSessions(),
 			'userRaces'				=> $userraces,
 			'racesWon'				=> $raceswon,
 			'raceswonpercent'		=> percentStr($raceswon, count($userraces)),
@@ -45,16 +43,24 @@ class Users extends BaseController
 			'qualifiescount'		=> $qualifies,
 			'racesretired'			=> $racesretired,
 			'racesretiredpercent'	=> percentStr($racesretired, count($userraces)),
-			'mostusedcar'			=> $user->getMostUsedCar(),
-			'mostusedtrack'			=> $user->getMostUsedTrack(),
-			'timeontrackPractice'	=> $user->getTimePractice(),
-			'timeontrackQualify'	=> $user->getTimeQualify(),
-			'timeontrackRace'		=> $user->getTimeOnRace(),
-			'timeontrack'			=> $user->getTimeOnTracks(),
+			'mostusedcar'			=> $this->usersModel->getMostUsedCar(),
+			'mostusedtrack'			=> $this->usersModel->getMostUsedTrack(),
+			'timeontrackPractice'	=> $this->usersModel->getTimePractice(),
+			'timeontrackQualify'	=> $this->usersModel->getTimeQualify(),
+			'timeontrackRace'		=> $this->usersModel->getTimeOnRace(),
+			'timeontrack'			=> $this->usersModel->getTimeOnTracks(),
 			'user'					=> $user
 		];
+		log_message('debug', json_encode($tplData['raceSessions']));
 		echo get_header("User: $username");
 		echo view('user', $tplData);
 		echo get_footer();
+	}
+
+	public function login()
+	{
+		echo get_header("Log In");
+		echo view('login');
+		echo get_footer(['dashboard.js']);
 	}
 }

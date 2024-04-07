@@ -1,15 +1,18 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\UsersModel;
+use App\Models\CarCatsModel;
+use App\Models\TracksModel;
+use CodeIgniter\API\ResponseTrait;
 
 class Home extends BaseController
 {
-	protected $users;
+	use ResponseTrait;
 
 	public function index()
 	{
 		$tplData = [];
+		$carCatModel = new CarCatsModel();
 
 		// select interested period
 		if(array_key_exists('period', $_COOKIE))
@@ -17,15 +20,12 @@ class Home extends BaseController
 			$period = $_COOKIE['period'];
 		}
 
-		if(array_key_exists('period', $_GET))
+		if($this->request->getGet('period'))
 		{
-			setcookie( "period", $_GET['period'], time()+(60*60*24*30) );
-			$period = $_GET['period'];
+			$period = $this->request->getGet('period');
+			setcookie( "period", $period, time()+(60*60*24*30) );
 		}
-		else
-		{
-			$period = 'year';
-		}
+		else $period = 'today';
 
 		$tplData['period'] = $period;
 
@@ -51,49 +51,53 @@ class Home extends BaseController
 				$backto = time()-$datediff;
 				$tplData['periodString'] = 'In the last year';
 				break;
-		/*
-		case 'date'://from this date
-			$datediff=(7*24*60*60);
-			$backto=time()-$datediff;
-			$periodString ='From '.date('d-m-Y', $backto);
-			break;
-		*/
-		case 'allTime'://always
-			$datediff = (50000*24*60*60);
-			$backto = time() - $datediff;
-			$tplData['periodString'] = 'all time';
-			break;
+			case 'allTime'://always
+				$datediff = (50000*24*60*60);
+				$backto = time() - $datediff;
+				$tplData['periodString'] = 'all time';
+				break;
+			default:
+				throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
 		}
 
 		//select the category to display
-		if (array_key_exists('cat', $_GET))
+		$catId = $this->request->getGet('cat');
+		if ($catId)
 		{
-			$carCatId = $_GET['cat'];
-			$tplData['carCatId'] = $carCatId;
+			// Check if the cat exists
+			$exists = $carCatModel->find($catId);
+			if (!$exists) throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+
+			$carCatId = $catId;
+		}
+		else
+		{
+			$first = $carCatModel->select('id')->findAll(1);
+			$carCatId = $first[0]->id;
 		}
 
-		//reorder the cetegories by name
-		$carCategories = getCarCats();
-		$carCategoriesList = get_object_vars($carCategories);
-		ksort($carCategoriesList);
+		$tplData['carCatId'] = $carCatId;
 
-		$tplData['carCategories'] = $carCategories;
-		$tplData['carCategoriesList'] = $carCategoriesList;
+		// Get cars categories
+		$categoriesList = $carCatModel->select('id, name, count(carId) as totalCars')->groupBy('id')->findAll();
+		$currCat = $carCatModel->find($carCatId);
 
-		if (!isset($carCatId)) $carCatId = array_key_first($carCategoriesList);
+		$carsCatList = $carCatModel->select('carId')->where('id', $carCatId)->findAll();
 
-		$carsql = '';
-		foreach ($carCategories->$carCatId->cars as $car){
-			$carsql.=" OR B.car_id='$car'";
-		}
+		$tplData['currCat'] = $currCat;
+		$tplData['carCategoriesList'] = $categoriesList;
 
-		$carsql = substr($carsql, 4); //remove the first " OR "
+		$carsCatIds = [];
+		foreach ($carsCatList as $car) $carsCatIds[] = $car->carId;
 
 		//UGLY: there is some category that have no car assigned so create a fake $carsql for them
 		//to prevent errors in the generated queries
+		/*
+		$carsql = '0';
 		if($carsql == ''){
 			$carsql = " B.car_id='NonExistentCarIdFindThisIfYouCan'";
 		}
+		*/
 
 		/*
 		################################
@@ -102,16 +106,17 @@ class Home extends BaseController
 		################################
 		*/
 
-		$builder = $this->db->table('races B');
-		$builder->select('B.user_id, COUNT(*) as count');
-		$builder->where('UNIX_TIMESTAMP(B.timestamp) >', $backto);
-		$builder->where("($carsql)");
-		$builder->groupBy('B.user_id');
+		$builder = $this->db->table('races r');
+		$builder->select('r.user_id, COUNT(*) AS count, u.username');
+		$builder->join('users u', 'u.id = r.user_id');
+		$builder->where('UNIX_TIMESTAMP(r.timestamp) >', $backto);
+		$builder->whereIn('r.car_id', $carsCatIds);
+		$builder->groupBy('r.user_id');
 		$builder->orderBy('count DESC');
 	
 		$tplData['users'] = [];
 		$query = $builder->get();
-		if ($query || $query->getNumRows() > 0) $tplData['users'] = $query->getResult();
+		if ($query && $query->getNumRows() > 0) $tplData['users'] = $query->getResult();
 
 		/*
 		################################
@@ -120,59 +125,72 @@ class Home extends BaseController
 		################################
 		*/
 
-		$builder = $this->db->table('laps A');
-		$builder->select('A.race_id, B.track_id, B.car_id, B.user_id, B.timestamp, A.wettness, min(A.laptime) as bestlap');
-		$builder->join('races B', 'A.race_id = B.id');
-		$builder->where('UNIX_TIMESTAMP(B.timestamp) >', $backto);
-		$builder->where("($carsql)");
-		$builder->groupBy(['B.track_id', 'A.wettness']);
+		$builder = $this->db->table('laps l');
+		$builder->select('l.race_id, r.track_id, r.car_id, r.user_id, r.timestamp, l.wettness, min(l.laptime) as bestlap, c.name AS car_name, t.name AS track_name, u.username');
+		$builder->join('races r', 'l.race_id = r.id');
+		$builder->join('cars c', 'c.id = r.car_id');
+		$builder->join('tracks t', 't.id = r.track_id');
+		$builder->join('users u', 'u.id = r.user_id');
+		$builder->where('UNIX_TIMESTAMP(r.timestamp) >', $backto);
+		$builder->whereIn('r.car_id', $carsCatIds);
+		$builder->groupBy(['r.track_id', 'l.wettness']);
 	
 		$tplData['mylaps'] = [];
 
 		$query = $builder->get();
-		if ($query || $query->getNumRows() > 0) $tplData['mylaps'] = $query->getResult();
-
-		$query = "
-			SELECT track_id, COUNT(*) as count
-			FROM races B
-				WHERE UNIX_TIMESTAMP(timestamp) > $backto
-				AND ($carsql)
-				GROUP BY B.track_id
-				ORDER BY COUNT(*) DESC";
-
+		if ($query && $query->getNumRows() > 0) $tplData['mylaps'] = $query->getResult();
+		
 		$tplData['tracks'] = [];
-		$builder = $this->db->table('races B');
-		$builder->select('B.track_id, COUNT(*) as count');
-		$builder->where('UNIX_TIMESTAMP(B.timestamp) >', $backto);
-		$builder->where("($carsql)");
-		$builder->groupBy('B.track_id');
+		$builder = $this->db->table('races');
+		$builder->select('track_id, COUNT(*) AS count');
+		$builder->where('UNIX_TIMESTAMP(timestamp) >', $backto);
+		$builder->whereIn('car_id', $carsCatIds);
+		$builder->groupBy('track_id');
 		$builder->orderBy('count DESC');
 	
 		$query = $builder->get();
-		if ($query || $query->getNumRows() > 0) $tplData['tracks'] = $query->getResult();
 
-		$query="
-			SELECT car_id, COUNT(*) as count
-			FROM races B
-			WHERE UNIX_TIMESTAMP(timestamp) > $backto
-				AND ($carsql)
-			GROUP BY B.car_id
-			ORDER BY COUNT(*) DESC";
+		if ($query && $query->getNumRows() > 0)
+		{
+			$tracks = $query->getResult();
+
+			$tracksIds = [];
+			foreach($tracks as $track) $tracksIds[] = $track->track_id;
+
+			$tracksModel = new TracksModel();
+			$tracksNames = [];
+			$tracksNamesList = $tracksModel->select('id, name')->whereIn('id', $tracksIds)->findAll();
+
+			foreach($tracksNamesList as $name) $tracksNames[$name->id] = $name->name;
+			foreach($tracksIds as $id)
+			{
+				if (!key_exists($id, $tracksNames)) $tracksNames[$id] = "$id (Modded)";
+			}
+
+			$tplData['tracks'] = $tracks;
+			$tplData['tracksNames'] = $tracksNames;
+		}
 
 		$tplData['cars'] = [];
 
-		$builder = $this->db->table('races B');
-		$builder->select('car_id, COUNT(*) as count');
-		$builder->where('UNIX_TIMESTAMP(B.timestamp) >', $backto);
-		$builder->where("($carsql)");
-		$builder->groupBy('B.car_id');
+		$builder = $this->db->table('races r');
+		$builder->join('cars c', 'c.id = r.car_id');
+		$builder->select('r.car_id, COUNT(r.car_id) as count, c.name');
+		$builder->where('UNIX_TIMESTAMP(r.timestamp) >', $backto);
+		$builder->whereIn('r.car_id', $carsCatIds);
+		$builder->groupBy('r.car_id');
 		$builder->orderBy('count DESC');
 
 		$query = $builder->get();
-		if ($query || $query->getNumRows() > 0) $tplData['cars'] = $query->getResult();
+		if ($query && $query->getNumRows() > 0) $tplData['cars'] = $query->getResult();
 
 		echo get_header('Home');
 		echo view('main', $tplData);
 		echo get_footer();
+	}
+
+	public function error404()
+	{
+		return view('404');
 	}
 }

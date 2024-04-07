@@ -7,18 +7,26 @@ use App\Models\TracksModel;
 
 class Races extends BaseController
 {
-    protected $users;
+    protected object $users;
+	protected object $carsModel;
+	protected object $tracksModel;
 
 	public function __construct()
 	{
 		$this->users = new UsersModel();
+		$this->carsModel = new CarsModel();
+		$this->tracksModel = new TracksModel();
 	}
 
     public function index($race)
     {
 		//$this->cachePage(360);
-		$builder = $this->db->table('races');
-		$builder->where('id', $race);
+		$builder = $this->db->table('races r');
+		$builder->join('cars c', 'c.id = r.car_id');
+		$builder->join('tracks t', 't.id = r.track_id');
+		$builder->join('users u', 'u.id = r.user_id');
+		$builder->select('r.id, r.type, r.timestamp, r.car_id, c.name AS car_name, c.img as car_img, r.track_id, t.name AS track_name, t.img AS track_img, u.username');
+		$builder->where('r.id', $race);
 		$query = $builder->get(1);
 
 		$tplData = [];
@@ -36,10 +44,6 @@ class Races extends BaseController
 				$tplData['laps'] = json_encode($query->getResult());
 				$tplData['race']->n_laps = $query->getNumRows();
 			}
-
-			$tplData['user'] = new UsersModel($tplData['race']->user_id);
-			$tplData['car'] = new CarsModel(getCar($tplData['race']->car_id));
-			$tplData['track'] = new TracksModel(getTrack($tplData['race']->track_id));
 		}
 
 		echo get_header('Races');

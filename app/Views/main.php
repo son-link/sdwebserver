@@ -1,30 +1,32 @@
 <?php
-	use App\Models\UsersModel;
 	$menu = '<nav>';
 	$menuSelect = '<select id="menu-select">';
 	/*################################
 	## generate the car category selection menu
 	################################
 	*/
-	foreach ($carCategoriesList as $id => $category) {
+	foreach ($carCategoriesList as $cat)
+	{
 		$class = '';
 		$selected = '';
 		//if the category contain no cars we do no consider it
 		//todo: should we display only officially released ones?
-		if (count($category->cars) > 0) {
+		if ($cat->totalCars > 0)
+		{
 			//if no category has been chosen by the user, used the first valid (non empty) one
-			if ($carCatId=='') {
-				$carCatId= $id;
-			}
+			if ($carCatId == '') $carCatId = $cat->id;
 
 			//set a splecial class for the menu item that represent the currently selected class
-			if ($carCatId == $id ){
+			if ($carCatId == $cat->id )
+			{
 				$class = 'class="selected"';
 				$selected = 'selected';
 			}
+
 			//echo "\n<a href='?cat=".$id."' $class>".$category->name."</a>";
-			$menu .= '<a href="'.rewriteUrl('cat',$id).'"'."$class>".$category->name."</a>";
-			$menuSelect .= '<option value="'.rewriteUrl('cat',$id).'"'."$selected>".$category->name."</option>";
+			$url = rewriteUrl('cat', $cat->id);
+			$menu .= "<a href=\"$url\" $class>{$cat->name}</a>";
+			$menuSelect .= "<option value=\"$url\" $selected>{$cat->name}</option>";
 		}
 	}
 	$menu .= '</nav>';
@@ -44,10 +46,13 @@
 		<a id="year" href="<?= rewriteUrl('period','year'); ?>">Year</a>
 		<a id="allTime" href="<?= rewriteUrl('period','allTime'); ?>">All Time</a>
 	</nav>
-	
+
+	<?php if (!empty($currCat)): ?>
 	<h1 id="cat-title">
-		<?= $carCategories->$carCatId->name; ?>
+		<?= $currCat->name ?>
 	</h1>
+	<?php endif ?>
+
 	<h3>
 		Most active users<br />
 		<small><?= $periodString; ?></small>
@@ -61,15 +66,14 @@
 		</thead>
 		<tbody>
 		<?php
-			foreach ($users as $race):
-				$user = new UsersModel($race->user_id);
+			foreach ($users as $user):
 		?>
 				<tr>
 					<td data-title="Pilot">
-						<?= $user->getLink() ?>
+						<?= clickableName($user->username, 'user', $user->username) ?>
 					</td>
 					<td data-title="Races">
-						<?= $race->count ?>
+						<?= $user->count ?>
 					</td>
 				</tr>
 			<?php endforeach; ?>
@@ -95,19 +99,18 @@
 		<tbody>
 		<?php
 			foreach ($mylaps as $mylap):
-				$user=new UsersModel($mylap->user_id);
 				$track = $mylap->track_id;
 				$car = $mylap->car_id;
 		?>
 		<tr>
 			<td data-title="Track">
-				<?= getTrack($track)->clickableName(); ?>
+				<?= clickableName($mylap->track_id, 'track', $mylap->track_name) ?>
 			</td>
 			<td data-title="Pilot">
-				<?= $user->getLink(); ?>
+				<?= clickableName($mylap->username, 'user', $mylap->username) ?>
 			</td>
 			<td data-title="Car">
-				<?= getCar($car)->clickableName(); ?>
+				<?= clickableName($mylap->car_id, 'car', $mylap->car_name) ?>
 			</td>
 			<td data-title="Laptime">
 				<?= formatLaptime($mylap->bestlap); ?>
@@ -119,7 +122,7 @@
 				<?= $mylap->timestamp; ?>
 			</td>
 			<td data-title="Session">
-				<a href="<?= base_url() ?>/race/<?= $mylap->race_id ?>">#<?=$mylap->race_id?></a>
+				<a href="<?= base_url() ?>race/<?= $mylap->race_id ?>">#<?=$mylap->race_id?></a>
 			</td>
 		</tr>
 		<?php endforeach ?>
@@ -139,10 +142,9 @@
 		</thead>
 		<tbody>
 		<?php foreach ($tracks as $race): ?>
-			<?php $track = $race->track_id ?>
 			<tr>
 				<td data-title="Track">
-					<?= getTrack($track)->clickableName() ?>
+					<?= clickableName($race->track_id, 'track', $tracksNames[$race->track_id]) ?>
 				</td>
 				<td data-title="Races">
 					<?= $race->count ?>
@@ -151,7 +153,6 @@
 		<?php endforeach ?>
 		</tbody>
 	</table>
-
 	<h3>
 		Top cars<br />
 		<small><?php echo $periodString; ?></small>
@@ -164,14 +165,13 @@
 			</tr>
 		</thead>
 		<tbody>
-		<?php foreach ($cars as $race): ?>
-			<?php $car = $race->car_id ?>
+		<?php foreach ($cars as $car): ?>
 			<tr>
 				<td data-title="Car">
-					<?= getCar($car)->clickableName() ?>
+					<?= clickableName($car->car_id, 'car', $car->name) ?>
 				</td>
 				<td data-title="Races">
-					<?= $race->count ?>
+					<?= $car->count ?>
 				</td>
 			</tr>
 		<?php endforeach ?>

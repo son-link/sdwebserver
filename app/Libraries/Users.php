@@ -12,11 +12,6 @@ class Users
 	const HASH = PASSWORD_DEFAULT;
 	const COST = 16;
 
-	public function __construct()
-	{
-		$this->db = \Config\Database::connect();
-	}
-
 	/**
 	 * Add new to the database
 	 */
@@ -29,6 +24,7 @@ class Users
 
 		unset($data['passwordcheck']);
 		unset($data['phrase']);
+		unset($data['PHPSESSID']);
 
 		// First verify if the user or email
 		$sql = $this->db->table('users');

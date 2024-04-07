@@ -14,9 +14,12 @@ class Webserver extends BaseController
 
     public function index()
     {
+		// Log connection
+		log_message('debug', 'New connection');
+		$so = getOS();
 		$data = $this->request->getPost('data');
 
-		if (!$data) return $this->failValidationError('No data received');
+		if (!$data) return $this->failValidationErrors('No data received');
 
         $xml = xmlObj($data);
 

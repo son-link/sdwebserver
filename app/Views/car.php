@@ -4,7 +4,7 @@
 	</h1>
 	<div class="ct-info">
 		<div class="ct-img">
-			<?= $car->imgTagFull() ?>
+			<?= imgTagFull($car->img, 'car', $car->name) ?>
 		</div>
 		<div class="ct-info-body">
 			<div class="ct-info-row">

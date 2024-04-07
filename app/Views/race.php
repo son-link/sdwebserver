@@ -15,19 +15,19 @@
 		<tr>
 			<th>Track:</th>
 			<td id="race-track-img">
-				<?= $track->linkTitleImgTag() ?>
+				<?= linkTitleImgTag($race->track_id, 'track', $race->track_name, $race->track_img) ?>
 			</td>
 		</tr>
 		<tr>
 			<th>Car:</th>
 			<td>
-				<?= $car->linkTitleImgTag() ?>
+				<?= linkTitleImgTag($race->car_id, 'car', $race->car_name, $race->car_img) ?>
 			</td>
 		</tr>
 		<tr>
 			<th>User:</th>
 			<td>
-				<?= $user->getLink() ?>
+				<?= clickableName($race->username, 'user', $race->username) ?>
 			</td>
 		</tr>
 		<tr>

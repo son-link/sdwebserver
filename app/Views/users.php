@@ -1,13 +1,13 @@
 <div class="container">
 	<div class="cards">
 	<?php foreach ($users as $user): ?>
-		<a href="<?= base_url() ?>/user/<?= $user->username ?>" class="user-card">
+		<a href="<?= base_url() ?>user/<?= $user->username ?>" class="user-card">
 			<div class="card-head">
 				<div class="card-title">
 					<?= $user->username ?>
 				</div>
 				<div class="card-img">
-					<img src="<?=base_url()?>/img/users/<?=$user->img?>">
+					<img src="<?=base_url()?>img/users/<?=$user->img?>">
 				</div>
 			</div>
 			<div class="card-body">

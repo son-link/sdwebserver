@@ -560,9 +560,51 @@ sd-carcategoryselection {
 	margin: 1rem auto;
 }
 
-#race-info #race-track-img img {
+#race-info #race-track-img img,
+.ct-img {
 	background: #bdbdbd;
 	padding: .3rem
+}
+
+/* Login */
+#login-form {
+	width: 240px;
+	margin: auto;
+	display: block;
+}
+
+#login-form button {
+	display: block;
+	background-color: #13aff0;
+	border: 0;
+	font-size: 1.2rem;
+	padding: .5rem 1rem;
+	border-radius: 3px;
+	color: #fff;
+	margin: .5rem auto;
+}
+
+#login-error {
+	width: auto;
+	max-width: 380px;
+	margin: auto;
+	text-align: center;
+}
+
+#login-error::before {
+	content: '';
+}
+
+#img_404 {
+	display: block;
+	margin: auto;
+	max-width: 192px;
+}
+
+#text_404 {
+	font-size: 1.2rem;
+	font-weight: 600;
+	text-align: center
 }
 
 @media (min-width: 640px) and (max-width: 1023px) {

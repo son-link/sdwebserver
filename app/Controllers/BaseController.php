@@ -27,6 +27,9 @@ class BaseController extends Controller
      * @var CLIRequest|IncomingRequest
      */
     protected $request;
+    protected $db;
+
+    protected $session;
 
     /**
      * An array of helpers to be loaded automatically upon
@@ -50,5 +53,6 @@ class BaseController extends Controller
         // E.g.: $this->session = \Config\Services::session();
         $this->db = \Config\Database::connect();
 		$this->request = \Config\Services::request();
+        $this->session = session();
     }
 }

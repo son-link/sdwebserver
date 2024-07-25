@@ -21,7 +21,7 @@ $('#user-edit-form > form').on('submit', function(e) {
 
 	const formData = new FormData(this);
 
-	axios.post('/dashboard/update_user', formData)
+	axios.post(`${base_url}/dashboard/update_user`, formData)
 		.then( resp => {
 			if (resp.data) window.location.reload()
 		})
@@ -46,7 +46,7 @@ $('#user-passwd-form > form').on('submit', function(e) {
 		return;
 	}
 
-	axios.post('/dashboard/change_passwd', formData)
+	axios.post(`${base_url}/dashboard/change_passwd`, formData)
 		.then( resp => {
 			if (resp.data) {
 				if (resp.data.ok) window.location.reload()

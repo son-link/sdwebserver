@@ -1,0 +1,55 @@
+@font-face {
+  font-family: 'sd';
+  src:  url('fonts/sd.eot?xx4vmn');
+  src:  url('fonts/sd.eot?xx4vmn#iefix') format('embedded-opentype'),
+    url('fonts/sd.ttf?xx4vmn') format('truetype'),
+    url('fonts/sd.woff?xx4vmn') format('woff'),
+    url('fonts/sd.svg?xx4vmn#sd') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="sd-"], [class*=" sd-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'sd' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.sd-git:before {
+  content: "\e900";
+  color: #f05032;
+}
+.sd-mastodon:before {
+  content: "\e901";
+  color: #3088d4;
+}
+.sd-peertube:before {
+  content: "\e902";
+  color: #f1680d;
+}
+.sd-youtube:before {
+  content: "\e903";
+  color: #f00;
+}
+.sd-sports:before {
+  content: "\e904";
+}
+.sd-logout:before {
+  content: "\e905";
+}
+.sd-groups:before {
+  content: "\e906";
+}
+.sd-account_box:before {
+  content: "\e907";
+}

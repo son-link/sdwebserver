@@ -13,6 +13,7 @@ $routes->get('track/(:any)', 'Tracks::index/$1');
 $routes->get('race/(:num)', 'Races::index/$1');
 $routes->get('users', 'Users::index');
 $routes->get('login', 'Users::login');
+$routes->get('register', 'Register::index');
 $routes->post('webserver', 'Webserver::index');
 
 $routes->group('dashboard', static function ($routes) {

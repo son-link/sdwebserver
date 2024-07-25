@@ -15,3 +15,42 @@ $('#login-form').on('submit', function(e) {
 		}
 	});
 });
+
+$('#user-edit-form > form').on('submit', function(e) {
+	e.preventDefault()
+
+	const formData = new FormData(this);
+
+	axios.post('/dashboard/update_user', formData)
+		.then( resp => {
+			if (resp.data) window.location.reload()
+		})
+})
+
+if (typeof nation !== 'undefined') {
+	$('#flaginput > option').each( ele => {
+		if (ele.innerText == nation) {
+			$(ele).attr('selected', true)
+			return true
+		}
+	})
+}
+
+$('#user-passwd-form > form').on('submit', function(e) {
+	e.preventDefault()
+
+	$('#passwd-error').hide();
+	const formData = new FormData(this);
+	if (formData.get('password') != formData.get('passwordcheck')) {
+		$('#passwd-error').show();
+		return;
+	}
+
+	axios.post('/dashboard/change_passwd', formData)
+		.then( resp => {
+			if (resp.data) {
+				if (resp.data.ok) window.location.reload()
+				else alert(resp.data.msg)
+			}
+		})
+})

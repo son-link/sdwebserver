@@ -20,13 +20,30 @@ a.selected {
 
 #dashmenu,
 header {
-	margin-top: 1rem;
+	padding-top: 1rem;
 }
 
 /* Menu */
 
+#dashmenu {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
 #dashmenu a {
 	text-decoration: none;
+	padding: 8px;
+	transition: none;
+}
+
+#dashmenu a:hover {
+	background-color: #4a4a4a;
+	color: #eee;
+}
+
+#dashmenu a > i {
+	margin-right: 8px;
 }
 
 /* Edit user */

@@ -589,6 +589,7 @@ sd-carcategoryselection {
 	max-width: 380px;
 	margin: auto;
 	text-align: center;
+	display: none;
 }
 
 #login-error::before {

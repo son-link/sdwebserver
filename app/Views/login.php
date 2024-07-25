@@ -8,6 +8,6 @@
 		<button type="submit">Login</button>
 	</form>
 	<div id="login-error" class="error">
-		Usuario y/o contraseña incorrecto.
+		User and/or passwd incorrect.
 	</div>
 </div>

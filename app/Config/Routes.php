@@ -12,3 +12,14 @@ $routes->get('car/(:any)', 'Cars::index/$1');
 $routes->get('track/(:any)', 'Tracks::index/$1');
 $routes->get('race/(:num)', 'Races::index/$1');
 $routes->get('users', 'Users::index');
+$routes->get('login', 'Users::login');
+$routes->post('webserver', 'Webserver::index');
+
+$routes->group('dashboard', static function ($routes) {
+	$routes->get('/', 'Dashboard::index', ['filter' => 'userSession']);
+	$routes->get('user', 'Dashboard::user', ['filter' => 'userSession']);
+	$routes->get('logout', 'Dashboard::logout');
+	$routes->post('login', 'Dashboard::login');
+	$routes->post('update_user', 'Dashboard::updateUser', ['filter' => 'userSession']);
+	$routes->post('change_passwd', 'Dashboard::changePasswd', ['filter' => 'userSession']);
+});

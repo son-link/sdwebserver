@@ -262,7 +262,7 @@
 			</div>
 		</div>
 		<div class="register-right">
-			<input type="submit" value="Register" class="primary" />
+			<input type="submit" value="Update" class="primary" />
 		</div>
 	</form>
 </div>
@@ -278,7 +278,7 @@
 		<input type="password" name="passwordcheck" id="passwordcheck" required />
 		<span class="input-error" id="passwd-error">Passwords don't match</span>
 		<div class="register-right">
-			<input type="submit" value="Register" class="primary" />
+			<input type="submit" value="Change" class="primary" />
 		</div>
 	</form>
 </div>

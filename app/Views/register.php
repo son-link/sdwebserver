@@ -25,10 +25,11 @@
 				<span class="input-error">Email address isn't valid</span>
 				
 				<label>Password:</label>
-				<input type="password" name="password" id="password" required />
+				<input type="password" name="password" id="password" pattern="[0-9a-zA-Z_\-\|@\#~\$%\(\)=\^\*\+\[\]\{\}]{6,16}" required />
+				<span class="input-error">The password must be between 6 and 16 characters long. Only letters, numbers and the following special characters are allowed: |@#~~$%()=^*+[]{}-_</span>
 
 				<label>Repeat password:</label>
-				<input type="password" name="passwordcheck" id="passwordcheck" required />
+				<input type="password" name="passwordcheck" id="passwordcheck" pattern="[0-9a-zA-Z_\-\|\@\#\~\$\%\(\)=\^\*\+\[\]\{\}]{6,16}" required />
 				<span class="input-error" id="passwd-error">Passwords don't match</span>
 
 				<div class="nation-sel">

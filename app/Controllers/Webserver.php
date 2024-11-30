@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
+use App\Models\BestLapsModel;
 
 class Webserver extends BaseController
 {
@@ -12,14 +13,16 @@ class Webserver extends BaseController
 	const HASH = PASSWORD_DEFAULT;
 	const COST = 16;
 
+	private BestLapsModel $bestLapsModel;
     public function index()
     {
 		// Log connection
 		log_message('debug', 'New connection');
-		$so = getOS();
+		$this->bestLapsModel = new BestLapsModel;
 		$data = $this->request->getPost('data');
 
 		if (!$data) return $this->failValidationErrors('No data received');
+		//log_message('debug', $data);
 
         $xml = xmlObj($data);
 
@@ -40,7 +43,6 @@ class Webserver extends BaseController
 		$requestid = $content->addChild('attnum');
 		$requestid->addAttribute('name','request_id');
 		$requestid->addAttribute('val',$xml->request_id);
-
 
 		$version = $content->addChild('attnum');
 		$version->addAttribute('name','webServerVersion');
@@ -66,7 +68,6 @@ class Webserver extends BaseController
 				
 				$myDb = $this->db->table($requestype);
 				$update = $myDb->where('id', $requestdata->id)->update((array) $requestdata);
-				//$myDb->update($requestdata, $requestype, $conditions);
 
 				//xml
 				$races = $this->reply->addChild('section');
@@ -127,30 +128,17 @@ class Webserver extends BaseController
 		$id->addAttribute('name', 'id');
 		$id->addAttribute('val', $this->db->insertID());
 
-		//select the best lap for this car/track combo
+		// Select the best lap for this user's car/track combo
 
 		$myDb = $this->db->table('laps A');
 		$myDb->select('min(A.laptime) as bestlap');
 		$myDb->join('races B', 'A.race_id = B.id');
 		$myDb->where([
 			'B.car_id'		=> $requestdata->car_id,
-			'B.track_id'	=> $requestdata->track_id
+			'B.track_id'	=> $requestdata->track_id,
+			'B.user_id'		=> $requestdata->user_id,
 		]);
-		/*$query="
-			SELECT min(A.laptime) as bestlap
-			FROM laps A
-			INNER
-				JOIN races B
-				ON A.race_id = B.id
-			WHERE
-				B.car_id = '".$requestdata->car_id."'
-				AND B.track_id = '".$requestdata->track_id."'
-		";
-
-		$bestlap = $myDb->customSelect($query);*/
-
-		//$query = $myDb->getResult();
-		//if (!$query) return;
+		
 		$results = $myDb->get(1);
 		if (!$results || $results->getNumRows() == 0) return;
 		
@@ -172,7 +160,10 @@ class Webserver extends BaseController
 	private function laps($requestdata)
 	{
 		$myDb = $this->db->table('laps');
-		$myDb->insert((array) $requestdata);
+		$insert = $myDb->insert((array) $requestdata);
+		$lap_id = $this->db->insertID();
+
+		log_message('debug', "Insert: $insert. Lap ID:  $lap_id");
 
 		//xml
 		$laps = $this->reply->addChild('section');
@@ -182,16 +173,8 @@ class Webserver extends BaseController
 		$id->addAttribute('name', 'id');
 		$id->addAttribute('val', $this->db->insertID());
 
-		//select the car and track id for this race
-		/*$query="
-			SELECT track_id, car_id
-			FROM races
-			WHERE
-				id =".$requestdata->race_id."
-		";*/
-
 		$myDb = $this->db->table('races');
-		$myDb->select('track_id, car_id');
+		$myDb->select('track_id, car_id, user_id');
 		$myDb->where('id', $requestdata->race_id);
 		
 		$results = $myDb->get(1);
@@ -199,20 +182,7 @@ class Webserver extends BaseController
 		
 		$racedata = $results->getRow();
 
-		//$racedata = $myDb->customSelect($query);
-
-		//select the best lap for this car/track combo
-		/*$query="
-			SELECT min(A.laptime) as bestlap
-			FROM laps A
-			INNER
-				JOIN races B
-				ON A.race_id = B.id
-			WHERE
-				B.car_id = '".$racedata[0]['car_id']."'
-				AND B.track_id = '".$racedata[0]['track_id']."'
-		";*/
-
+		/*
 		$myDb = $this->db->table('laps A');
 		$myDb->select('min(A.laptime) as bestlap');
 		$myDb->join('races B', 'A.race_id = B.id');
@@ -220,11 +190,64 @@ class Webserver extends BaseController
 			'B.car_id'		=> $racedata->car_id,
 			'B.track_id'	=> $racedata->track_id
 		]);
+		*/
+		// Get the car category
+		$bestlap = 0.000;
+		$car_cat = null;
+		$query = $this->db->query('SELECT id FROM cars_cats WHERE carID = ?', [$racedata->car_id]);
+		if ($query && $query->getNumRows() == 1)
+		{
+			$car_cat = $query->getRow()->id;
+			$query = $this->bestLapsModel->select('laptime')->where([
+				'track_id'	=> $racedata->track_id,
+				'car_cat'	=> $car_cat
+			])->get(1);
 
-		$results = $myDb->get(1);
-		if (!$results || $results->getNumRows() == 0) return;
-		
-		$bestlap = $results->getRow();
+			//$results = $myDb->get(1);
+			if ($query && $query->getNumRows() == 1) $bestlap = $query->getRow()->laptime;
+
+			// If the lap time is less the current best lap, or don't have a best lap (0.000),
+			// set this is the best lap
+
+			if ($bestlap == 0.000 || $requestdata->laptime < $bestlap)
+			{
+				// Get the setup of teh race
+				$query = $this->db->query('SELECT setup FROM races WHERE id = ?', [$requestdata->race_id]);
+				if ($query && $query->getNumRows() == 1)
+				{
+					$setup = $query->getRow()->setup;
+					if ($bestlap == 0.000)
+					{
+						$this->bestLapsModel->insert([
+							'race_id'	=> $requestdata->race_id,
+							'lap_id'	=> $lap_id,
+							'track_id'	=> $racedata->track_id,
+							'car_cat'	=> $car_cat,
+							'car_id'	=> $racedata->car_id,
+							'laptime'	=> $requestdata->laptime,
+							'user_id'	=> $racedata->user_id,
+							'setup'		=> $setup,
+						]);
+					}
+					else if ($requestdata->laptime < $bestlap)
+					{
+						$this->bestLapsModel
+							->where([
+								'track_id'	=> $racedata->track_id,
+								'car_cat'	=> $car_cat,
+							])
+							->set([
+								'race_id'	=> $requestdata->race_id,
+								'lap_id'	=> $lap_id,
+								'car_id'	=> $racedata->car_id,
+								'laptime'	=> $requestdata->laptime,
+								'user_id'	=> $racedata->user_id,
+								'setup'		=> $setup,
+							])->update();
+					}
+				}
+			}
+		}
 		
 		//xml messages
 		$messagges =  $this->reply->addChild('section');
@@ -236,7 +259,7 @@ class Webserver extends BaseController
 
 		$msg0 = $messagges->addChild('attstr');
 		$msg0->addAttribute('name','message0');
-		$msg0->addAttribute('val',"Position:".$requestdata->position."\nFuel:".$requestdata->fuel."\nLap:Best: ".formatLaptime($bestlap->bestlap)."\nLast: ".formatLaptime($requestdata->laptime)."\n Diff: ".formatLaptime($requestdata->laptime-$bestlap->bestlap));
+		$msg0->addAttribute('val',"Position:".$requestdata->position."\nFuel:".$requestdata->fuel."\nLap:Best: ".formatLaptime($bestlap)."\nLast: ".formatLaptime($requestdata->laptime)."\n Diff: ".formatLaptime($requestdata->laptime - $bestlap));
 	}
 
 	private function login($requestdata)
@@ -269,6 +292,9 @@ class Webserver extends BaseController
 				$id->addAttribute('name', 'id');
 				$id->addAttribute('val', $user->id);
 
+				// Save user id in the session
+				$this->session->set('user_id', $user->id);
+
 				//xml messages
 				$messagges = $this->reply->addChild('section');
 				$messagges->addAttribute('name','messages');
@@ -297,9 +323,8 @@ class Webserver extends BaseController
 
 				$msg0 = $messagges->addChild('attstr');
 				$msg0->addAttribute('name','message0');
-				$msg0->addAttribute('val',"FAILED to login in as\n\n".$requestdata->username."\n\nWrong username or password");
+				$msg0->addAttribute('val', "FAILED to login in as\n\n{$requestdata->username}\n\nWrong username or password");
 			}
-			
 		}
 		else
 		{
@@ -317,7 +342,7 @@ class Webserver extends BaseController
 
 			$msg0 = $messagges->addChild('attstr');
 			$msg0->addAttribute('name','message0');
-			$msg0->addAttribute('val',"FAILED to login in as\n\n".$requestdata->username."\n\nWrong username or password");
+			$msg0->addAttribute('val',"FAILED to login in as\n\n{$requestdata->username}\n\nWrong username or password");
 		}
 	}
 }

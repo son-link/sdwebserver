@@ -13,7 +13,6 @@ $routes->get('track/(:any)', 'Tracks::index/$1');
 $routes->get('race/(:num)', 'Races::index/$1');
 $routes->get('users', 'Users::index');
 $routes->get('login', 'Users::login');
-$routes->get('register', 'Register::index');
 $routes->post('webserver', 'Webserver::index');
 
 $routes->group('dashboard', static function ($routes) {
@@ -23,4 +22,11 @@ $routes->group('dashboard', static function ($routes) {
 	$routes->post('login', 'Dashboard::login');
 	$routes->post('update_user', 'Dashboard::updateUser', ['filter' => 'userSession']);
 	$routes->post('change_passwd', 'Dashboard::changePasswd', ['filter' => 'userSession']);
+});
+
+$routes->group('register', static function ($routes) {
+	$routes->get('/', 'Register::index');
+	$routes->post('newuser', 'Register::newuser');
+	$routes->get('new_captcha', 'Register::newCaptcha');
+	$routes->get('ok', 'Register::ok');
 });

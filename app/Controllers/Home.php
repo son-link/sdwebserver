@@ -3,6 +3,7 @@
 namespace App\Controllers;
 use App\Models\CarCatsModel;
 use App\Models\TracksModel;
+use App\Models\BestLapsModel;
 use CodeIgniter\API\ResponseTrait;
 
 class Home extends BaseController
@@ -12,7 +13,8 @@ class Home extends BaseController
 	public function index()
 	{
 		$tplData = [];
-		$carCatModel = new CarCatsModel();
+		$carCatModel = new CarCatsModel;
+		$bestLapsModel = new BestLapsModel;
 
 		// select interested period
 		if(array_key_exists('period', $_COOKIE))
@@ -124,33 +126,8 @@ class Home extends BaseController
 		## WITH A CAR OFT HIS CATEGORY
 		################################
 		*/
-
-		/*
-		$builder = $this->db->table('laps l');
-		$builder->select('l.race_id, r.track_id, r.car_id, r.user_id, r.timestamp, l.wettness, min(l.laptime) as bestlap, c.name AS car_name, t.name AS track_name, u.username');
-		$builder->join('races r', 'l.race_id = r.id');
-		$builder->join('cars c', 'c.id = r.car_id');
-		$builder->join('tracks t', 't.id = r.track_id');
-		$builder->join('users u', 'u.id = r.user_id');
-		$builder->where('UNIX_TIMESTAMP(r.timestamp) >', $backto);
-		$builder->whereIn('r.car_id', $carsCatIds);
-		$builder->groupBy(['r.track_id', 'l.wettness']);
-		*/
-		$builder = $this->db->table('bests_laps bl');
-		$builder->join('laps l', 'l.id = bl.lap_id');
-		$builder->select('l.race_id, r.track_id, r.car_id, r.user_id, r.timestamp, l.wettness, bl.laptime AS bestlap, c.name AS car_name, t.name AS track_name, u.username');
-		$builder->join('races r', 'r.id = bl.race_id');
-		$builder->join('cars c', 'c.id = bl.car_id');
-		$builder->join('tracks t', 't.id = bl.track_id');
-		$builder->join('users u', 'u.id = bl.user_id');
-		$builder->where('UNIX_TIMESTAMP(r.timestamp) >', $backto);
-		$builder->where('bl.car_cat', $carCatId);
-		$builder->groupBy(['r.track_id', 'l.wettness']);
-	
-		$tplData['mylaps'] = [];
-
-		$query = $builder->get();
-		if ($query && $query->getNumRows() > 0) $tplData['mylaps'] = $query->getResult();
+		
+		$tplData['mylaps'] = $bestLapsModel->getBests($backto, $carCatId, 0, 0);
 		
 		$tplData['tracks'] = [];
 		$builder = $this->db->table('races');

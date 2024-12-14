@@ -111,7 +111,7 @@
 					<a href="<?=base_url("race/{$race->id}")?>"><?=$race->id?></a>
 				</td>
 				<td data-title="Type">
-					<?= racetype($race->type) ?>
+					<?= $race->type ?> - <?= racetype($race->type) ?>
 				</td>
 				<td data-title="Started on">
 					<?= date_format(new DateTime($race->timestamp), 'd M Y @ H:i') ?>

@@ -2,7 +2,6 @@
 	function get_value($field)
 	{
 		global $formdata;
-		print_r($formdata);
 
 		if (!empty($formdata))
 		{

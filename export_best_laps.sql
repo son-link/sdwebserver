@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS bests_laps;,
+DROP TABLE IF EXISTS bests_laps;
 CREATE TABLE `bests_laps` (
 	`race_id` INT(11) NOT NULL,
 	`lap_id` INT(11) NOT NULL,

@@ -127,7 +127,7 @@ class Home extends BaseController
 		################################
 		*/
 		
-		$tplData['mylaps'] = $bestLapsModel->getBests($backto, $carCatId, 0, 0);
+		$tplData['mylaps'] = $bestLapsModel->getBests($period, $carCatId, 0, 0);
 		
 		$tplData['tracks'] = [];
 		$builder = $this->db->table('races');

@@ -7,10 +7,34 @@ class BestLapsModel extends BaseModel
 	protected $table      = 'bests_laps bl';
 	protected $allowedFields = ['race_id', 'lap_id', 'track_id', 'car_cat', 'car_id', 'laptime', 'user_id', 'setup'];
 
-	public function getBests(int $backto, string $carCat, int $page=0, int $limit=20)
+	public function getBests(string $period, string $carCat, int $page=0, int $limit=20)
 	{
 		$from = $page * $limit;
 		$list = [];
+
+		switch ($period)
+		{
+			case 'today': //today
+				$datediff = 1 * 24 * 60 * 60;
+				$backto = time() - $datediff;
+				break;
+			case 'week': //last week
+				$datediff = 7 * 24 * 60 * 60;
+				$backto = time() - $datediff;
+				break;
+			case 'month': //last month
+				$datediff = 30 * 24 * 60 * 60;
+				$backto = time() - $datediff;
+				break;
+			case 'year': //last year
+				$datediff = 365 * 24 * 60 * 60;
+				$backto = time() - $datediff;
+				break;
+			default://always
+				$datediff = 50000 * 24 * 60 * 60;
+				$backto = time() - $datediff;
+				break;
+		}
 
 		$builder = $this->builder();
 		$builder->join('laps l', 'l.id = bl.lap_id');

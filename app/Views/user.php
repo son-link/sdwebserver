@@ -14,7 +14,7 @@
 			</div>
 			<div>
 				<span class="user-info-title">Country:</span>
-				<img src="<?=base_url("img/flags/flags_small/<?=$user->flag")?>" alt="<?=$user->nation?>" > <?=$user->nation ?>
+				<img src="<?=base_url("img/flags/flags_small/$user->flag")?>" alt="<?=$user->nation?>" > <?=$user->nation ?>
 			</div>
 			<div>
 				<span class="user-info-title">Total time:</span><?= secondsToTime(round($timeontrack, 0)) ?>
@@ -33,11 +33,11 @@
 			</div>
 			<div>
 				<span class="user-info-title">Favorite car:</span>
-				<?php if ($mostusedcar->car) echo clickableName($mostusedcar->car->id, 'car', $mostusedcar->car->name); ?>
+				<?php if (!empty($mostusedcar->car)) echo clickableName($mostusedcar->car->id, 'car', $mostusedcar->car->name); ?>
 			</div>
 			<div>
 				<span class="user-info-title">Favorite track:</span>
-				<?php if ($mostusedtrack->track) echo clickableName($mostusedtrack->track->id, 'track', $mostusedtrack->track->name); ?>
+				<?php if (!empty($mostusedtrack->track)) echo clickableName($mostusedtrack->track->id, 'track', $mostusedtrack->track->name); ?>
 			</div>
 		</div>
 	</div>
@@ -111,7 +111,7 @@
 					<a href="<?=base_url("race/{$race->id}")?>"><?=$race->id?></a>
 				</td>
 				<td data-title="Type">
-					<?= $race->type ?> - <?= racetype($race->type) ?>
+					<?= racetype($race->type) ?>
 				</td>
 				<td data-title="Started on">
 					<?= date_format(new DateTime($race->timestamp), 'd M Y @ H:i') ?>

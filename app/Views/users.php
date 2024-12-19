@@ -22,9 +22,9 @@
 				</div>
 				<div>
 					<?php
-						if($user->sessiontimestamp>0)
+						if((int) $user->sessiontimestamp > 0)
 						{
-							$date1 = new DateTime("");
+							$date1 = new DateTime();
 							$date2 = new DateTime($user->sessiontimestamp);
 							$interval = $date1->diff($date2);
 							$ago='';

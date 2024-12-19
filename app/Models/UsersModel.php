@@ -420,8 +420,8 @@ class UsersModel extends BaseModel
 				//$builder->resetQuery();
 				// Move the file to it's new home
 				$filename =  $user['username'] . '.' . $image->getExtension();
-				$image->move(FCPATH . '/img/users/', $filename);
-				$this->where('id', $id)->update(['img' => $filename]);
+				$image->move(ROOTPATH . '/public/img/users/', $filename);$image->move(ROOTPATH . '/public/img/users/', $filename, true);
+				$this->where('id', $id)->set(['img' => $filename])->update();
 				$response['ok'] = true;
 			}
 		}

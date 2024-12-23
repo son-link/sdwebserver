@@ -16,6 +16,9 @@ class Cars extends BaseController
 	{
 		$this->cachePage(3600);
 		$car = $this->carsModel->data($id);
+		
+		if (!$car) throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		
 		echo get_header('Car: ' . $car->name);
 		echo view('car', ['car' => $car]);
 		echo get_footer();

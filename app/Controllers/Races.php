@@ -31,19 +31,18 @@ class Races extends BaseController
 
 		$tplData = [];
 
-		if ($query && $query->getNumRows() == 1)
-		{
-			$tplData['race'] =  $query->getRow();
-			$builder = $this->db->table('laps');
-			$builder->where('race_id', $tplData['race']->id);
-			$query = $builder->get();
+		if (!$query || $query->getNumRows() == 0) throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		
+		$tplData['race'] =  $query->getRow();
+		$builder = $this->db->table('laps');
+		$builder->where('race_id', $tplData['race']->id);
+		$query = $builder->get();
 			
-			$tplData['race']->n_laps = 0;
-			if ($query && $query->getNumRows() > 0)
-			{
-				$tplData['laps'] = json_encode($query->getResult());
-				$tplData['race']->n_laps = $query->getNumRows();
-			}
+		$tplData['race']->n_laps = 0;
+		if ($query && $query->getNumRows() > 0)
+		{
+			$tplData['laps'] = json_encode($query->getResult());
+			$tplData['race']->n_laps = $query->getNumRows();
 		}
 
 		echo get_header('Races');

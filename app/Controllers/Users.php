@@ -26,6 +26,9 @@ class Users extends BaseController
 	{
 		//$this->cachePage(3600);
 		$user = $this->usersModel->getUser($username);
+
+		if (!$user) throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+
 		$userraces = $this->usersModel->getRaces();
 		$raceswon = $this->usersModel->getWon();
 		$racespodiums = $this->usersModel->getPodiums();

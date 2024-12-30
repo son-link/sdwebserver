@@ -439,3 +439,30 @@ function linkTitleImgTag(string $id, string $type, string $name, string $img): s
 	$content = $name . '<br />' . imgTag($img, '80px', $name);
 	return "<a href='$url'>$content</a>";
 }
+
+/**
+ * Return time diff between current date and period
+ * @param mixed $period
+ * @return int
+ */
+function getDateDiff($period)
+{
+	switch ($period)
+		{
+			case 'today': //today
+				$datediff = 1 * 24 * 60 * 60;
+				return time() - $datediff;
+			case 'week': //last week
+				$datediff = 7 * 24 * 60 * 60;
+				return time() - $datediff;
+			case 'month': //last month
+				$datediff = 30 * 24 * 60 * 60;
+				return time() - $datediff;
+			case 'year': //last year
+				$datediff = 365 * 24 * 60 * 60;
+				return time() - $datediff;
+			default://always
+				$datediff = 50000 * 24 * 60 * 60;
+				return time() - $datediff;
+		}
+}

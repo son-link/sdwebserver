@@ -30,3 +30,12 @@ $routes->group('register', static function ($routes) {
 	$routes->get('new_captcha', 'Register::newCaptcha');
 	$routes->get('ok', 'Register::ok');
 });
+
+$routes->group('api', static function ($routes) {
+	$routes->get('bests_laps', 'Api::getBestsLaps');
+	$routes->get('most_active_users', 'Api::getMostActiveUsers');
+});
+
+$routes->group('test', static function ($routes) {
+	$routes->get('tables', 'Test::tables');
+});

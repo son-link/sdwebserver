@@ -8,6 +8,11 @@
 	<title><?=$title?></title>
 	<link rel="stylesheet" type="text/css" href="<?= base_url() ?>/css/style.css" />
 	<link rel="stylesheet" type="text/css" href="<?= base_url() ?>/font/weather-icons.css" />
+	<?php if(!empty($custom_css)): ?>
+		<?php foreach ($custom_css as $css): ?>
+			<link rel="stylesheet" type="text/css" href="<?=base_url()."/css/$css"?>"></script>
+		<?php endforeach ?>
+	<?php endif ?>
 </head>
 <body>
 	<nav class="mainMenu">

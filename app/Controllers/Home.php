@@ -84,13 +84,14 @@ class Home extends BaseController
 		$categoriesList = $carCatModel->select('id, name, count(carId) as totalCars')->groupBy('id')->findAll();
 		$currCat = $carCatModel->find($carCatId);
 
-		$carsCatList = $carCatModel->select('carId')->where('id', $carCatId)->findAll();
+		//$carsCatList = $carCatModel->select('carId')->where('id', $carCatId)->findAll();
+		$carsCatIds = $carCatModel->getCarsInCat($carCatId);
 
 		$tplData['currCat'] = $currCat;
 		$tplData['carCategoriesList'] = $categoriesList;
 
-		$carsCatIds = [];
-		foreach ($carsCatList as $car) $carsCatIds[] = $car->carId;
+		//$carsCatIds = [];
+		//foreach ($carsCatList as $car) $carsCatIds[] = $car->carId;
 
 		//UGLY: there is some category that have no car assigned so create a fake $carsql for them
 		//to prevent errors in the generated queries
@@ -108,6 +109,7 @@ class Home extends BaseController
 		################################
 		*/
 
+		/*
 		$builder = $this->db->table('races r');
 		$builder->select('r.user_id, COUNT(*) AS count, u.username');
 		$builder->join('users u', 'u.id = r.user_id');
@@ -119,6 +121,7 @@ class Home extends BaseController
 		$tplData['users'] = [];
 		$query = $builder->get();
 		if ($query && $query->getNumRows() > 0) $tplData['users'] = $query->getResult();
+		*/
 
 		/*
 		################################
@@ -126,8 +129,7 @@ class Home extends BaseController
 		## WITH A CAR OFT HIS CATEGORY
 		################################
 		*/
-		
-		$tplData['mylaps'] = $bestLapsModel->getBests($period, $carCatId, 0, 0);
+		//list($tplData['mylaps'], $_) = $bestLapsModel->getBests($period, $carCatId, 0, 0);
 		
 		$tplData['tracks'] = [];
 		$builder = $this->db->table('races');
@@ -173,9 +175,9 @@ class Home extends BaseController
 		$query = $builder->get();
 		if ($query && $query->getNumRows() > 0) $tplData['cars'] = $query->getResult();
 
-		echo get_header('Home');
+		echo get_header('Home', ['minidt.css']);
 		echo view('main', $tplData);
-		echo get_footer();
+		echo get_footer(['minidt.js', 'home_tables.js']);
 	}
 
 	public function error404()

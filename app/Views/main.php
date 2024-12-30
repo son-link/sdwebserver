@@ -57,77 +57,17 @@
 		Most active users<br />
 		<small><?= $periodString; ?></small>
 	</h3>
-	<table class="fullPage responsive cat-table">
-		<thead>
-			<tr>
-				<th>Pilot</th>
-				<th>Races</th>
-			</tr>
-		</thead>
-		<tbody>
-		<?php
-			foreach ($users as $user):
-		?>
-				<tr>
-					<td data-title="Pilot">
-						<?= clickableName($user->username, 'user', $user->username) ?>
-					</td>
-					<td data-title="Races">
-						<?= $user->count ?>
-					</td>
-				</tr>
-			<?php endforeach; ?>
-		</tbody>
-	</table>
+	<div class="table-container">
+		<table id="most_active_users" class="responsive cat-table"></table>
+	</div>
 
 	<h3>
 		Bests lap for each track<br />
 		<small><?=$periodString; ?></small>
-	</h3>				
-	<table class="fullPage responsive cat-table">
-		<thead>
-			<tr>
-				<th>Track</th>
-				<th>Pilot</th>
-				<th>Car</th>
-				<th>Laptime</th>
-				<th>Weather</th>
-				<th>Date</th>
-				<th>Session</th>
-			</tr>
-		</thead>
-		<tbody>
-		<?php
-			foreach ($mylaps as $mylap):
-				$track = $mylap->track_id;
-				$car = $mylap->car_id;
-		?>
-		<tr>
-			<td data-title="Track">
-				<?= clickableName($mylap->track_id, 'track', $mylap->track_name) ?>
-			</td>
-			<td data-title="Pilot">
-				<?= clickableName($mylap->username, 'user', $mylap->username) ?>
-			</td>
-			<td data-title="Car">
-				<?= clickableName($mylap->car_id, 'car', $mylap->car_name) ?>
-			</td>
-			<td data-title="Laptime">
-				<?= formatLaptime($mylap->bestlap); ?>
-			</td>
-			<td data-title="Weather">
-				<?= weatherTag($mylap->wettness); ?>
-			</td>
-			<td data-title="Date">
-				<?= $mylap->timestamp; ?>
-			</td>
-			<td data-title="Session">
-				<a href="<?= base_url() ?>race/<?= $mylap->race_id ?>">#<?=$mylap->race_id?></a>
-			</td>
-		</tr>
-		<?php endforeach ?>
-		</tbody>
-	</table>
+	</h3>
+	<div class="table-container">
+		<table id="best_laps" class="responsive"></table>
+	</div>
 
 	<h3>
 		Most used Tracks<br />

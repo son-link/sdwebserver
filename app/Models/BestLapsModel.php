@@ -9,7 +9,7 @@ class BestLapsModel extends BaseModel
 
 	public function getBests(string $period, string $carCat, int $page=0, int $limit=20)
 	{
-		$from = $page * $limit;
+		$offset = $page * $limit;
 		$list = [];
 
 		switch ($period)
@@ -36,7 +36,19 @@ class BestLapsModel extends BaseModel
 				break;
 		}
 
+		$total = 0;
 		$builder = $this->builder();
+		$builder->select('COUNT(*) AS total');
+		$builder->join('laps l', 'l.id = bl.lap_id');
+		$builder->join('races r', 'r.id = bl.race_id');
+		$builder->where('UNIX_TIMESTAMP(r.timestamp) >', $backto);
+		$builder->where('bl.car_cat', $carCat);
+		$builder->groupBy(['r.track_id', 'l.wettness']);
+		$query = $builder->get();
+
+		if ($query) $total = $query->getNumRows();
+
+		$builder->resetQuery();
 		$builder->join('laps l', 'l.id = bl.lap_id');
 		$builder->select('l.race_id, r.track_id, r.car_id, r.user_id, r.timestamp, l.wettness, bl.laptime AS bestlap, c.name AS car_name, t.name AS track_name, u.username');
 		$builder->join('races r', 'r.id = bl.race_id');
@@ -46,11 +58,11 @@ class BestLapsModel extends BaseModel
 		$builder->where('UNIX_TIMESTAMP(r.timestamp) >', $backto);
 		$builder->where('bl.car_cat', $carCat);
 		$builder->groupBy(['r.track_id', 'l.wettness']);
-		if ($limit > 0) $builder->limit($from, $limit);
+		if ($limit > 0) $builder->limit($limit, $offset);
 		$query = $builder->get();
 
 		if ($query && $query->getNumRows() > 0) $list = $query->getResult();
 
-		return $list;
+		return [$list, $total];
 	}
 }

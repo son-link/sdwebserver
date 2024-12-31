@@ -11,6 +11,14 @@ class TracksModel extends BaseModel
 	protected $db;
 	protected $allowedFields = ['id', 'name', 'img',  'category', 'author', 'description'];
 
+	/**
+	 * Return the most used tracks in the category
+	 * @param array $carsCatIds List with the car's ID on the category
+	 * @param string $period The period of time between the current date and when you want to obtain the list.
+	 * @param int $page Current page
+	 * @param int $limit The limit of results to be obtained
+	 * @return array An array with the list and the total number of unpaginated results.
+	 */
 	public function getMostUsedTracks(array $carsCatIds, string $period='today', int $page=0, int $limit=20)
 	{
 		$list = [];
@@ -45,51 +53,4 @@ class TracksModel extends BaseModel
 		
 		return [$list, $total];
 	}
-
-	/*
-	public function __construct($track=null)
-	{
-		if ($track) $this->import($track);
-	}
-
-	public function import($properties)
-	{    
-		foreach($properties as $key => $value) $this->{$key} = $value;
-    }
-
-	public function getLink($text='')
-	{
-		if($text == '') $text = $this->username;
-		return '<a href="track/'.$this->id.'">'.$text.'</a>';
-	}
-
-	public function card($text='')
-	{
-		return $this->name.$this->img;
-	}
-
-	public function imgTag() {
-		return "<img width='80' src='". base_url() ."/".$this->img."' alt='".$this->name."' title='".$this->name."'>";
-	}
-	
-	public function imgTagFull() {
-		return "<img src='". base_url() ."/".$this->img."'  class='track-img' alt='".$this->name."'>";
-	}
-	public function clickableName() {
-		return $this->linkTag($this->name);
-
-	}
-	public function clickableImgTag() {
-		return $this->linkTag($this->imgTag());
-	}
-	public function linkTag($content) {
-		return "<a href='". base_url() ."/track/".$this->id."'>".$content."</a>";
-	}
-
-	public function linkTitleImgTag()
-	{
-		$content = $this->name . '<br />' . $this->imgTag();
-		return "<a href='" . base_url() . "/track/{$this->id}'>$content</a>";
-	}
-	*/
 }

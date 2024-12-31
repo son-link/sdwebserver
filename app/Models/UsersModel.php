@@ -39,28 +39,6 @@ class UsersModel extends BaseModel
 		$this->raceTypes->race = 2;
 	}
 
-	/*
-	public function initialize()
-	{
-		$this->session = session();
-		$this->carsModel = new CarsModel;
-		$this->tracksModel = new TracksModel;
-
-		$this->raceTypes = new \stdClass;
-		$this->raceTypes->practice = 0; 
-		$this->raceTypes->qualify = 1;
-		$this->raceTypes->race = 2;
-	}
-
-	public function getUsers()
-	{
-		$query = $this->db->table('users')->get();
-		$users = [];
-
-		if ($query && $query->getNumRows() > 0) $users = $query->getResult();
-		return $users;
-	}
-	*/
 	public function getUser($username)
 	{
 		$builder = $this->builder();
@@ -101,57 +79,6 @@ class UsersModel extends BaseModel
 		return false;
 	}
 
-	/*
-    private function import($properties)
-	{    
-		foreach($properties as $key => $value){
-			$this->{$key} = $value;
-		}
-
-		// Add the flag filename
-		$this->flag = str_replace(' ', '_', $this->nation) . '.png';
-    }
-	
-	public function getFromDb()
-	{
-		$builder = $this->db->table('users');
-		$builder->where('id', $this->id);
-		$query = $builder->get(1);
-
-		if ($query && $query->getNumRows() == 1)
-		{
-			$this->import($query->getRowArray());
-		}
-		else
-		{
-			//no valid result found! create a fake user
-			$this->username = '<i>guest</i>';
-			$this->nation = '';
-		}
-	}
-
-	public function getLink($text='')
-	{
-		if ($text == '') $text=$this->username;
-		return "<a href='" . base_url() . "user/{$this->username}'>$text</a>";
-	}
-
-	public function getSmallFlagImg()
-	{		
-		return "<img src='" . base_url() . "img/flags/flags_small/{$this->flag}' alt='{$this->nation}'>";
-	}
-
-	public function getMediumFlagImg()
-	{
-		return "<img src='" . base_url() . "img/flags/flags_medium/{$this->flag}' alt='{$this->nation}'>";
-	}
-
-	public function getImgFile()
-	{
-		return "<img class='avatar' src='" . base_url() . "img/users/{$this->img}' alt='{$this->username}'>";
-	}
-
-	*/
 	public function getRaceSessions()
 	{
 		$builder = $this->db->table('races r');

@@ -1,10 +1,8 @@
 <?php
 	$menu = '<nav>';
 	$menuSelect = '<select id="menu-select">';
-	/*################################
-	## generate the car category selection menu
-	################################
-	*/
+	
+	// generate the car category selection menu
 	foreach ($carCategoriesList as $cat)
 	{
 		$class = '';
@@ -16,19 +14,19 @@
 			//if no category has been chosen by the user, used the first valid (non empty) one
 			if ($carCatId == '') $carCatId = $cat->id;
 
-			//set a splecial class for the menu item that represent the currently selected class
+			//set a special class for the menu item that represent the currently selected class
 			if ($carCatId == $cat->id )
 			{
 				$class = 'class="selected"';
 				$selected = 'selected';
 			}
 
-			//echo "\n<a href='?cat=".$id."' $class>".$category->name."</a>";
 			$url = rewriteUrl('cat', $cat->id);
 			$menu .= "<a href=\"$url\" $class>{$cat->name}</a>";
 			$menuSelect .= "<option value=\"$url\" $selected>{$cat->name}</option>";
 		}
 	}
+
 	$menu .= '</nav>';
 	$menuSelect .= '</select>';
 ?>
@@ -73,50 +71,18 @@
 		Most used Tracks<br />
 		<small><?php echo $periodString; ?></small>
 	</h3>
-	<table class="fullPage responsive cat-table">
-		<thead>
-			<tr>
-				<th>Track</th>
-				<th>Races</th>
-			</tr>
-		</thead>
-		<tbody>
-		<?php foreach ($tracks as $race): ?>
-			<tr>
-				<td data-title="Track">
-					<?= clickableName($race->track_id, 'track', $tracksNames[$race->track_id]) ?>
-				</td>
-				<td data-title="Races">
-					<?= $race->count ?>
-				</td>
-			</tr>
-		<?php endforeach ?>
-		</tbody>
-	</table>
+	<div class="table-container">
+		<table id="most_used_tracks" class="fullPage responsive cat-table"></table>
+	</div>
+
 	<h3>
 		Top cars<br />
 		<small><?php echo $periodString; ?></small>
 	</h3>
-	<table class="fullPage responsive cat-table">
-		<thead>
-			<tr>
-				<th>Car</th>
-				<th>Races</th>
-			</tr>
-		</thead>
-		<tbody>
-		<?php foreach ($cars as $car): ?>
-			<tr>
-				<td data-title="Car">
-					<?= clickableName($car->car_id, 'car', $car->name) ?>
-				</td>
-				<td data-title="Races">
-					<?= $car->count ?>
-				</td>
-			</tr>
-		<?php endforeach ?>
-		</tbody>
-	</table>
+	<div class="table-container">
+		<table id="most_used_cars" class="fullPage responsive cat-table"></table>
+	</div>
+
 </div>
 <script>
 	period = '<?= $period ?>';

@@ -130,7 +130,7 @@ class Home extends BaseController
 		################################
 		*/
 		//list($tplData['mylaps'], $_) = $bestLapsModel->getBests($period, $carCatId, 0, 0);
-		
+		/*
 		$tplData['tracks'] = [];
 		$builder = $this->db->table('races');
 		$builder->select('track_id, COUNT(*) AS count');
@@ -160,8 +160,9 @@ class Home extends BaseController
 
 			$tplData['tracks'] = $tracks;
 			$tplData['tracksNames'] = $tracksNames;
-		}
+		}*/
 
+		/*
 		$tplData['cars'] = [];
 
 		$builder = $this->db->table('races r');
@@ -174,7 +175,7 @@ class Home extends BaseController
 
 		$query = $builder->get();
 		if ($query && $query->getNumRows() > 0) $tplData['cars'] = $query->getResult();
-
+		*/
 		echo get_header('Home', ['minidt.css']);
 		echo view('main', $tplData);
 		echo get_footer(['minidt.js', 'home_tables.js']);

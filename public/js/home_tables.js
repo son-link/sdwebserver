@@ -81,3 +81,49 @@ const dt_bests_laps = new MiniDT({
 		car_cat: car_cat
 	}
 })
+
+const dt_most_used_tracks = new MiniDT({
+	target: 'most_used_tracks',
+	url: `${base_url}/api/most_used_tracks`,
+	cols:  [
+		{
+			title: 'Track',
+			col: 'track_id',
+			render: (row) => {
+				return linkTag(row.track_id, 'track', row.track_name)
+			}
+		},
+		{
+			title: 'Races',
+			col: 'count',
+			align: 'right'
+		},
+	],
+	params: {
+		period: period,
+		car_cat: car_cat
+	}
+})
+
+const dt_most_used_cars = new MiniDT({
+	target: 'most_used_cars',
+	url: `${base_url}/api/most_used_cars`,
+	cols:  [
+		{
+			title: 'Car',
+			col: 'car_id',
+			render: (row) => {
+				return linkTag(row.car_id, 'track', row.name)
+			}
+		},
+		{
+			title: 'Races',
+			col: 'count',
+			align: 'right'
+		},
+	],
+	params: {
+		period: period,
+		car_cat: car_cat
+	}
+})

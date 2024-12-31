@@ -1,15 +1,6 @@
 html {
 	margin: 0px;
 	padding:0px;
-	/*background:
-	/*
-	radial-gradient(black 15%, transparent 16%) 0 0,
-	radial-gradient(black 15%, transparent 16%) 8px 8px,
-	radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
-	radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
-	*/
-	/*background-color:#282828;
-	background-size:16px 16px;*/
 }
 
 body {
@@ -48,6 +39,14 @@ th {
 
 #main {
 	margin-bottom: 1rem;
+}
+
+header {
+	width: 100%;
+	z-index: 10;
+	position: sticky;
+	top: 0;
+	background-color: #fff;
 }
 
 /* ########################################
@@ -89,6 +88,11 @@ th {
 	position: relative;
 }
 
+#header_logo.main_page {
+	width: calc(100% - 17%);
+	margin-left: 17%;
+}
+
 #header_logo > img {
 	position: absolute;
 	top: 25px;
@@ -104,6 +108,10 @@ th {
 #menu {
 	float: left;
 	width: 17%;
+	position: fixed;
+	top: 40px;
+	max-height: calc(100vh - 40px);
+  	overflow: auto;
 }
 
 #menu nav,
@@ -637,7 +645,7 @@ sd-carcategoryselection {
 		width: 100%;
 		display: block;
 		position: sticky;
-		top: 0;
+		top: 40px;
 		z-index: 100;
 		background-color: #fff;
 	}
@@ -687,6 +695,14 @@ sd-carcategoryselection {
 		padding: 0 5px;
 	}
 
+	table.responsive tfoot th {
+		padding-left: 0;
+	} 
+	table.responsive tfoot th::before {
+		display: none;
+		width: 0;
+	}
+
 	table.responsive tr:nth-of-type(2n+2) {
 	  	background-color: #DDDDDD;
 	}
@@ -724,6 +740,11 @@ sd-carcategoryselection {
 	}
 
 	.mainMenu {
-		width: 90%;
+		width: 98%;
+	}
+
+	#header_logo.main_page {
+		width: 100%;
+		margin-left: 0;
 	}
 }

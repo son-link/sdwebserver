@@ -1,5 +1,10 @@
-<!doctype html>
+<?php
+	$request = service('request');
+	$uri = $request->getUri();
+	$current_path = $uri->getPath();
+?>
 
+<!doctype html>
 <html>
 <head>
 	<meta charset="utf-8">
@@ -15,16 +20,18 @@
 	<?php endif ?>
 </head>
 <body>
-	<nav class="mainMenu">
-		<a href="<?= base_url() ?>">Home</a>
-		<a href="<?= base_url('users') ?>">Racers</a>
-		<!--<li><a href="./live.php">Live stats</a></li>-->
-		<a href="<?= base_url('register') ?>">Register</a>
-		<a href="<?= base_url('login') ?>">Login</a>
-		<a href="https://speed-dreams.net" target="_black">Blog</a>
-	</nav>
+	<header>
+		<nav class="mainMenu">
+			<a href="<?= base_url() ?>">Home</a>
+			<a href="<?= base_url('users') ?>">Racers</a>
+			<!--<li><a href="./live.php">Live stats</a></li>-->
+			<a href="<?= base_url('register') ?>">Register</a>
+			<a href="<?= base_url('login') ?>">Login</a>
+			<a href="https://speed-dreams.net" target="_black">Blog</a>
+		</nav>
+	</header>
 	
-	<div id="header_logo">
+	<div id="header_logo" <?= ($current_path == '/') ? 'class="main_page"' : '' ?>>
 		<img class="logo" src="<?= base_url() ?>/img/sd-flag.png" alt="Speed Dreams logo"/>
 	</div>
 

@@ -34,6 +34,8 @@ $routes->group('register', static function ($routes) {
 $routes->group('api', static function ($routes) {
 	$routes->get('bests_laps', 'Api::getBestsLaps');
 	$routes->get('most_active_users', 'Api::getMostActiveUsers');
+	$routes->get('most_used_tracks', 'Api::getMostUsedTracks');
+	$routes->get('most_used_cars', 'Api::getMostUsedCars');
 });
 
 $routes->group('test', static function ($routes) {

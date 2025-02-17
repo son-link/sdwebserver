@@ -36,6 +36,7 @@ $routes->group('api', static function ($routes) {
 	$routes->get('most_active_users', 'Api::getMostActiveUsers');
 	$routes->get('most_used_tracks', 'Api::getMostUsedTracks');
 	$routes->get('most_used_cars', 'Api::getMostUsedCars');
+	$routes->get('user_races', 'Api::getUserRaces');
 });
 
 $routes->group('test', static function ($routes) {

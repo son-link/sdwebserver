@@ -29,23 +29,23 @@ class Users extends BaseController
 
 		if (!$user) throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
 
-		$userraces = $this->usersModel->getRaces();
+		$userraces = $this->usersModel->getRaces(true);
 		$raceswon = $this->usersModel->getWon();
 		$racespodiums = $this->usersModel->getPodiums();
 		$racesretired = $this->usersModel->getUnfinisced();
 		$practices = $this->usersModel->getPractices();
 		$qualifies = $this->usersModel->getQualifies();
 		$tplData = [
-			'raceSessions'			=> $this->usersModel->getRaceSessions(),
+			//'raceSessions'			=> $this->usersModel->getRaceSessions(),
 			'userRaces'				=> $userraces,
 			'racesWon'				=> $raceswon,
-			'raceswonpercent'		=> percentStr($raceswon, count($userraces)),
+			'raceswonpercent'		=> percentStr($raceswon, $userraces),
 			'racespodiums'			=> $racespodiums,
-			'racespodiumpercent'	=> percentStr($racespodiums->totalPodiums, count($userraces)),
+			'racespodiumpercent'	=> percentStr($racespodiums->totalPodiums, $userraces),
 			'practicescount'		=> $practices,
 			'qualifiescount'		=> $qualifies,
 			'racesretired'			=> $racesretired,
-			'racesretiredpercent'	=> percentStr($racesretired, count($userraces)),
+			'racesretiredpercent'	=> percentStr($racesretired, $userraces),
 			'mostusedcar'			=> $this->usersModel->getMostUsedCar(),
 			'mostusedtrack'			=> $this->usersModel->getMostUsedTrack(),
 			'timeontrackPractice'	=> $this->usersModel->getTimePractice(),
@@ -54,10 +54,9 @@ class Users extends BaseController
 			'timeontrack'			=> $this->usersModel->getTimeOnTracks(),
 			'user'					=> $user
 		];
-		log_message('debug', json_encode($tplData['raceSessions']));
-		echo get_header("User: $username");
+		echo get_header("User: $username", ['minidt.css']);
 		echo view('user', $tplData);
-		echo get_footer();
+		echo get_footer(['minidt.js', 'user_tables.js']);
 	}
 
 	public function login()

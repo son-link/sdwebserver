@@ -79,8 +79,17 @@ class UsersModel extends BaseModel
 		return false;
 	}
 
-	public function getRaceSessions()
+	public function getRaceSessions(int $page=0, int $limit =0)
 	{
+		$total = 0;
+		$list = 0;
+		$offset = $page * $limit;
+
+		$query = $this->db->query('SELECT COUNT(r.user_id) AS total FROM races r WHERE r.user_id = ?', [$this->id]);
+
+		if ($query && $query->getNumRows() > 0) $total = $query->getRow()->total;
+		if ($total == 0) return [[], 0];
+
 		$builder = $this->db->table('races r');
 		$builder->select('r.id, r.user_skill, r.track_id, r.car_id, r.startposition, r.endposition');
 		$builder->select('r.sdversion, r.timestamp, r.type, t.name as track_name, c.name as car_name');
@@ -88,22 +97,28 @@ class UsersModel extends BaseModel
 		$builder->join('cars c', 'c.id = r.car_id');
 		$builder->where('r.user_id', $this->id);
 		$builder->orderBy('r.id DESC');
+		if ($limit > 0) $builder->limit($limit, $offset);
 		$query = $builder->get();
 
-		if ($query && $query->getNumRows() > 0) return $query->getResult();
-		return [];
+		if ($query && $query->getNumRows() > 0) $list = $query->getResult();
+		
+		return [$list, $total];
 	}
 
-	public function getRaces()
+	public function getRaces(bool $count=false)
 	{
 		$builder = $this->db->table('races');
 		$builder->where([
 			'user_id'	=> $this->id,
 			'type'		=> $this->raceTypes->race
 		]);
+
+		if ($count) $builder->select('COUNT(*) AS total');
 		$query = $builder->get();
 
-		if ($query && $query->getNumRows() > 0) return $query->getResult();
+		if ($query && $query->getNumRows() > 0)
+			return ($count) ? $query->getRow()->total : $query->getResult();
+		
 		return [];
 	}
 

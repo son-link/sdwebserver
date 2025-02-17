@@ -20,7 +20,7 @@
 				<span class="user-info-title">Total time:</span><?= secondsToTime(round($timeontrack, 0)) ?>
 			</div>
 			<div>
-				<span class="user-info-title">Total races:</span><?= count($userRaces) ?>.
+				<span class="user-info-title">Total races:</span><?= $userRaces ?>.
 			</div>
 			<div>
 				<span class="user-info-title">Wins:</span><?= (int) $racesWon ?>
@@ -91,54 +91,7 @@
 
 	<!-- all races from this driver -->
 	<h1>Latest Races</h1>
-	<table class="responsive">
-		<thead>
-			<tr>
-				<th>Session ID</th>
-				<th>Type</th>
-				<th>Started on</th>
-				<th>Track</th>
-				<th>Car</th>
-				<th>Finish Position<br>(gain/loss)</th>
-			</tr>
-		</thead>
-		<tbody>
-		<?php
-		foreach ($raceSessions as $race):
-		?>
-			<tr>
-				<td data-title="Session ID">
-					<a href="<?=base_url("race/{$race->id}")?>"><?=$race->id?></a>
-				</td>
-				<td data-title="Type">
-					<?= racetype($race->type) ?>
-				</td>
-				<td data-title="Started on">
-					<?= date_format(new DateTime($race->timestamp), 'd M Y @ H:i') ?>
-				</td>
-				<td data-title="Track">
-					<?= $race->track_name ?>
-				</td>
-				<td data-title="Car">
-					<?= $race->car_name ?>
-				</td>
-				<td data-title="Finish Position">
-				<?php
-					if ($race->endposition > 0)
-					{
-						echo $race->endposition;
-						$gain = $race->startposition - $race->endposition;
-
-						if ($gain >= 0) echo " <sup style='color:green;'>(+$gain)</sup>";
-						else echo "<sup style='color:red;'>($gain)</sup>";
-					}
-					else echo 'Retired/Not finished';
-				?>
-				</td>
-			</tr>
-		<?php
-		endforeach;
-		?>
-		</tbody>
-	</table>
+	<div class="table-container">
+		<table id="last_user_races" class="responsive cat-table"></table>
+	</div>
 </div>

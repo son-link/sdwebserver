@@ -7,6 +7,7 @@ use App\Models\BestLapsModel;
 use App\Models\CarsModel;
 use App\Models\CarCatsModel;
 use App\Models\TracksModel;
+use App\Models\UsersModel;
 use CodeIgniter\API\ResponseTrait;
 
 class Api extends BaseController
@@ -107,6 +108,27 @@ class Api extends BaseController
 		$total = 0;
 
 		[$list, $total] = $carsModel->getMostUsedCars($carsCatIds, $period, $page, $limit);
+
+		return $this->respond(['data' => $list, 'total' => $total]);
+	}
+
+	public function getUserRaces()
+	{
+		$username = $this->request->getGet('username');
+
+		if (!$username) return $this->fail('The period and/or category were not indicated');
+
+		$page = $this->request->getGet('page');
+		$limit = $this->request->getGet('limit');
+		if (!$page | !is_numeric($page)) $page = 0;
+		if (!$limit | !is_numeric($limit)) $limit = 0;
+
+		$usersModel = new UsersModel();
+		$usersModel->getUser($username);
+		$list = [];
+		$total = 0;
+
+		[$list, $total] = $usersModel->getRaceSessions($page, $limit);
 
 		return $this->respond(['data' => $list, 'total' => $total]);
 	}

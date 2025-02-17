@@ -36,3 +36,16 @@ function linkTag(id, type , content) {
 	
 	return `<a href="${url}">${content}</a>`;
 }
+
+function racetype(type) {
+	type = parseInt(type)
+	
+	switch (type) {
+		case 0:
+			return 'Practice';
+		case 1:
+			return 'Qualify';
+		case 2:
+			return 'Race';
+	}
+}

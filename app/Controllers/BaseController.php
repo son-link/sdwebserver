@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
  *
  * For security be sure to declare any new methods as protected or private.
  */
-class BaseController extends Controller
+abstract class BaseController extends Controller
 {
     /**
      * Instance of the main Request object.
@@ -36,12 +36,18 @@ class BaseController extends Controller
      * class instantiation. These helpers will be available
      * to all other controllers that extend BaseController.
      *
-     * @var array
+     * @var list<string>
      */
-    protected $helpers = ['myhelpers'];
+    protected $helpers = [];
 
     /**
-     * Constructor.
+     * Be sure to declare properties for any property fetch you initialized.
+     * The creation of dynamic property is deprecated in PHP 8.2.
+     */
+    // protected $session;
+
+    /**
+     * @return void
      */
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
@@ -50,9 +56,9 @@ class BaseController extends Controller
 
         // Preload any models, libraries, etc, here.
 
-        // E.g.: $this->session = \Config\Services::session();
+        // E.g.: $this->session = service('session');
         $this->db = \Config\Database::connect();
-		$this->request = \Config\Services::request();
-        $this->session = session();
+		$this->request = service('request');
+        $this->session = service('session');
     }
 }

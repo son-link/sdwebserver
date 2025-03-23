@@ -24,7 +24,7 @@
 		<nav class="mainMenu">
 			<a href="<?= base_url() ?>">Home</a>
 			<a href="<?= base_url('users') ?>">Racers</a>
-			<!--<li><a href="./live.php">Live stats</a></li>-->
+			<a href="<?= base_url('championship') ?>">Championship</a>
 			<a href="<?= base_url('register') ?>">Register</a>
 			<a href="<?= base_url('login') ?>">Login</a>
 			<a href="https://speed-dreams.net" target="_black">Blog</a>

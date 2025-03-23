@@ -27,7 +27,7 @@ class Api extends BaseController
 		if (!$page | !is_numeric($page)) $page = 0;
 		if (!$limit | !is_numeric($limit)) $limit = 0;
 
-		[$list, $total] = $bestLapsModel->getBests($period, $carCatId, $page, $limit);
+		[$list, $total] = $bestLapsModel->getBests($period, $carCatId, '', $page, $limit);
 
 		return $this->respond(['data' => $list, 'total' => $total]);
 	}
@@ -131,5 +131,35 @@ class Api extends BaseController
 		[$list, $total] = $usersModel->getRaceSessions($page, $limit);
 
 		return $this->respond(['data' => $list, 'total' => $total]);
+	}
+
+	public function getChampionshipBestLaps()
+	{
+		$id = $this->request->getGet('championship');
+		$list = [];
+
+		if (!$id) return $this->respond($list);
+
+		$query = $this->db->query('SELECT * FROM championship WHERE id = ?', [$id]);
+		if ($query && $query->getNumRows() > 0)
+		{
+			$data = $query->getRow();
+			$builder = $this->db->table('laps l');
+			$builder->select('l.race_id, r.track_id, r.car_id, r.user_id, r.timestamp, l.wettness, l.laptime, c.name AS car_name, t.name AS track_name, u.username');
+			$builder->join('races r', 'r.id = l.race_id');
+			$builder->join('cars c', 'c.id = r.car_id');
+			$builder->join('tracks t', 't.id = r.track_id');
+			$builder->join('users u', 'u.id = r.user_id');
+			$builder->where('r.timestamp >= ', $data->date_start);
+			$builder->where('r.timestamp <= ', $data->date_end);
+			$builder->where('l.car_cat', $data->car_cat);
+			$builder->where('r.track_id', $data->track_id);
+			$builder->groupBy(['r.user_id']);
+			$query = $builder->get();
+
+			if ($query && $query->getNumRows() > 0) $list = $query->getResult();
+
+			return $this->respond(['data' => $list]);
+		}
 	}
 }

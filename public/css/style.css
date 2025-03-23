@@ -481,10 +481,11 @@ sd-carcategoryselection {
 	border-radius: 5px;
 	padding: .5rem;
 	box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+	gap: 1rem;
 }
 
 #user-img {
-	width: 180px;
+	width: 45%;
 }
 
 #user-img img {
@@ -499,7 +500,8 @@ sd-carcategoryselection {
 }
 
 #user-info {
-	margin-left: 1rem;
+	/*! padding-left: 1rem; */
+	width: 45%;
 }
 
 #user-stats th,
@@ -614,6 +616,11 @@ sd-carcategoryselection {
 	font-size: 1.2rem;
 	font-weight: 600;
 	text-align: center
+}
+
+#week-selector {
+	margin: auto;
+	text-align: center;
 }
 
 @media (min-width: 640px) and (max-width: 1023px) {

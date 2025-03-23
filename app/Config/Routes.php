@@ -14,6 +14,7 @@ $routes->get('race/(:num)', 'Races::index/$1');
 $routes->get('users', 'Users::index');
 $routes->get('login', 'Users::login');
 $routes->post('webserver', 'Webserver::index');
+$routes->get('championships', 'Home::championships');
 
 $routes->group('dashboard', static function ($routes) {
 	$routes->get('/', 'Dashboard::index', ['filter' => 'userSession']);
@@ -37,6 +38,7 @@ $routes->group('api', static function ($routes) {
 	$routes->get('most_used_tracks', 'Api::getMostUsedTracks');
 	$routes->get('most_used_cars', 'Api::getMostUsedCars');
 	$routes->get('user_races', 'Api::getUserRaces');
+	$routes->get('championship_bestlaps', 'Api::getChampionshipBestLaps');
 });
 
 $routes->group('test', static function ($routes) {

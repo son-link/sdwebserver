@@ -11,6 +11,10 @@ class MiniDT {
     this.url = config.url
     this.cols = {}
     this.target = document.getElementById(config.target)
+    this.get_data_start = !!config.get_data_start
+
+    if (!this.target) return false
+
     if (!this.target.classList.contains('mini-dt')) this.target.classList.add('mini-dt')
 
     // Create table header, body and footer
@@ -78,16 +82,18 @@ class MiniDT {
     th.appendChild(this.pagination_container)
     row_footer.appendChild(th);
     
-    this.getData()
+    if (this.get_data_start) this.getData()
   }
 
-  getData = async () => {
+  getData = async (params=null) => {
     this.rows = []
     this.params.limit = this.limit
     this.params.page = this.page
 
+    if (!params) params = this.params
+
     try {
-      const resp = await fetch(this.url + '?' + new URLSearchParams(this.params).toString())
+      const resp = await fetch(this.url + '?' + new URLSearchParams(params).toString())
       const data = await resp.json()
       if (!!data.data) this.rows = data.data
       this.total = (!!data.total) ? data.total : 0

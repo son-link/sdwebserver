@@ -17,12 +17,10 @@ class Webserver extends BaseController
     public function index()
     {
 		// Log connection
-		log_message('debug', 'New connection');
 		$this->bestLapsModel = new BestLapsModel;
 		$data = $this->request->getPost('data');
 
 		if (!$data) return $this->failValidationErrors('No data received');
-		//log_message('debug', $data);
 
         $xml = xmlObj($data);
 
@@ -33,7 +31,7 @@ class Webserver extends BaseController
 
 		$this->xmlreply = new \SimpleXMLElement($string);
 		$temp = $this->xmlreply->xpath('/params');
-		$params = $temp[0];//size"[@label='Large']");
+		$params = $temp[0]; //size"[@label='Large']");
 
 		$params->addAttribute('name','webServerReply');
 
@@ -159,6 +157,21 @@ class Webserver extends BaseController
 
 	private function laps($requestdata)
 	{
+		log_message('debug', json_encode($requestdata));
+
+		// Get track and card category
+		$builder = $this->db->table('races r');
+		$builder->join('cars_cats cc', 'cc.carID = r.car_id');
+		$builder->select('r.track_id, cc.id AS car_cat');
+		$builder->where('r.id', $requestdata->race_id);
+		$query = $builder->get(1);
+		if ($query && $query->getNumRows() == 1)
+		{
+			$result = $query->getRow();
+			$requestdata->track_id = $result->track_id;
+			$requestdata->car_cat = $result->car_cat;
+		}
+
 		$myDb = $this->db->table('laps');
 		$insert = $myDb->insert((array) $requestdata);
 		$lap_id = $this->db->insertID();

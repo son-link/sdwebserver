@@ -24,14 +24,14 @@
 		<nav class="mainMenu">
 			<a href="<?= base_url() ?>">Home</a>
 			<a href="<?= base_url('users') ?>">Racers</a>
-			<a href="<?= base_url('championship') ?>">Championship</a>
+			<a href="<?= base_url('championships') ?>">Championship</a>
 			<a href="<?= base_url('register') ?>">Register</a>
 			<a href="<?= base_url('login') ?>">Login</a>
 			<a href="https://speed-dreams.net" target="_black">Blog</a>
 		</nav>
 	</header>
 	
-	<div id="header_logo" <?= ($current_path == '/') ? 'class="main_page"' : '' ?>>
+	<div id="header_logo" <?= ($current_path == '/masterserver/') ? 'class="main_page"' : '' ?>>
 		<img class="logo" src="<?= base_url() ?>/img/sd-flag.png" alt="Speed Dreams logo"/>
 	</div>
 

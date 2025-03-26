@@ -81,7 +81,7 @@ header {
 }
 
 #header_logo {
-	background: url(/img/hg.jpg) no-repeat center;
+	background: url(/masterserver/img/hg.jpg) no-repeat center;
 	background-size: cover;
 	background-attachment: fixed;
 	height: 200px;
@@ -618,9 +618,18 @@ sd-carcategoryselection {
 	text-align: center
 }
 
-#week-selector {
+ /* Championship page */
+ #week-selector {
 	margin: auto;
 	text-align: center;
+}
+
+.championship-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-content: center;
+	justify-content: center;
+	gap: 1rem
 }
 
 @media (min-width: 640px) and (max-width: 1023px) {

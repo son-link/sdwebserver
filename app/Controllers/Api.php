@@ -27,7 +27,7 @@ class Api extends BaseController
 		if (!$page | !is_numeric($page)) $page = 0;
 		if (!$limit | !is_numeric($limit)) $limit = 0;
 
-		[$list, $total] = $bestLapsModel->getBests($period, $carCatId, '', $page, $limit);
+		[$list, $total] = $bestLapsModel->getBests($period, $carCatId, $page, $limit);
 
 		return $this->respond(['data' => $list, 'total' => $total]);
 	}
@@ -145,15 +145,19 @@ class Api extends BaseController
 		{
 			$data = $query->getRow();
 			$builder = $this->db->table('laps l');
-			$builder->select('l.race_id, r.track_id, r.car_id, r.user_id, r.timestamp, l.wettness, l.laptime, c.name AS car_name, t.name AS track_name, u.username');
+			$builder->select('l.race_id, r.track_id, r.car_id, r.user_id, r.timestamp, l.wettness');
+			$builder->select('MIN(l.laptime) AS laptime, c.name AS car_name, t.name AS track_name, u.username');
+			$builder->select('cc.name AS category_name');
 			$builder->join('races r', 'r.id = l.race_id');
 			$builder->join('cars c', 'c.id = r.car_id');
 			$builder->join('tracks t', 't.id = r.track_id');
 			$builder->join('users u', 'u.id = r.user_id');
+			$builder->join('cars_cats cc', 'cc.id = l.car_cat');
 			$builder->where('r.timestamp >= ', $data->date_start);
 			$builder->where('r.timestamp <= ', $data->date_end);
 			$builder->where('l.car_cat', $data->car_cat);
 			$builder->where('r.track_id', $data->track_id);
+			$builder->orderBy('laptime');
 			$builder->groupBy(['r.user_id']);
 			$query = $builder->get();
 

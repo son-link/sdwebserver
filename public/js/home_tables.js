@@ -4,7 +4,7 @@ const period = (!!urlParams.get('period')) ? urlParams.get('period') : 'today'
 
 const dt_active_users = new MiniDT({
 	target: 'most_active_users',
-	url: `${base_url}/api/most_active_users`,
+	url: `${base_url}api/most_active_users`,
 	cols:  [
 		{
 			title: 'Pilot',
@@ -113,7 +113,7 @@ const dt_most_used_cars = new MiniDT({
 			title: 'Car',
 			col: 'car_id',
 			render: (row) => {
-				return linkTag(row.car_id, 'track', row.name)
+				return linkTag(row.car_id, 'car', row.name)
 			}
 		},
 		{

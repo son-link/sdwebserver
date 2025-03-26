@@ -2,6 +2,7 @@ class MiniDT {
 	constructor(config) {
     if (!config.url || !config.target || !config.cols) return false;
 
+    this.loading = false
     this.rows = []
     this.page = 0
     this.total = 0
@@ -11,7 +12,8 @@ class MiniDT {
     this.url = config.url
     this.cols = {}
     this.target = document.getElementById(config.target)
-    this.get_data_start = !!config.get_data_start
+    this.show_pagination = false
+    this.show_pagination = (typeof config.show_pagination === 'undefined' || config.show_pagination === true)
 
     if (!this.target) return false
 
@@ -61,7 +63,6 @@ class MiniDT {
 
     // Previous page button
     this.prev_btn = document.createElement('button')
-    //this.prev_btn.innerText = '<'
     this.prev_btn.classList.add('prev-btn')
     this.prev_btn.addEventListener('click', this.previous)
     this.pagination_container.appendChild(this.prev_btn)
@@ -74,18 +75,27 @@ class MiniDT {
 
     // Next page button
     this.next_btn = document.createElement('button')
-    //this.next_btn.innerText = '>'
     this.next_btn.classList.add('next-btn')
     this.next_btn.addEventListener('click', this.next)
     this.pagination_container.appendChild(this.next_btn)
 
     th.appendChild(this.pagination_container)
     row_footer.appendChild(th);
-    
-    if (this.get_data_start) this.getData()
+
+    // Loading message
+    this.loading_div = document.createElement('div')
+    this.loading_div.classList.add('loading')
+    this.loading_msg = document.createElement('div')
+    this.loading_msg.classList.add('loading-msg');
+    this.loading_msg.innerHTML = '<strong>Loading...</strong>'
+    this.loading_div.appendChild(this.loading_msg)
+    this.target.appendChild(this.loading_div)
+
+    this.getData()
   }
 
   getData = async (params=null) => {
+    this.loading_div.classList.add('show')
     this.rows = []
     this.params.limit = this.limit
     this.params.page = this.page
@@ -107,6 +117,7 @@ class MiniDT {
     }
 
     this.render()
+    this.loading_div.classList.remove('show')
   }
 
   /**
@@ -138,7 +149,7 @@ class MiniDT {
           }
         })
       })
-      this.tfoot.classList.remove('hide')
+      if (this.show_pagination) this.tfoot.classList.remove('hide')
     }
 
     this.pageSelector.removeEventListener('change', this.changePage)

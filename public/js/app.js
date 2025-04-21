@@ -20,11 +20,11 @@ function weatherTag(weather)
 		case 0:
 			return '<i class="wi wi-day-sunny"></i>';
 		case 1:
-			return '<i class="wi wi-rain"></i>';
+			return '<i class="wi wi-rain" title="Little rain"></i>';
 		case 2:
-			return '<i class="wi wi-rain"></i>';
+			return '<i class="wi wi-rain" title="Medium rain"></i>';
 		case 3:
-			return '<i class="wi wi-rain"></i>';
+			return '<i class="wi wi-rain" title="Hard rain"></i>';
 		default:
 			return ''
 	}

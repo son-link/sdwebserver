@@ -171,13 +171,13 @@ function weatherTag($value)
 	switch($value)
 	{
 		case 0:
-			return '<i class="wi wi-day-sunny"></i>';
+			return '<i class="wi wi-day-sunny" title="Sunny"></i>';
 		case 1:
-			return '<i class="wi wi-rain"></i>';
+			return '<i class="wi wi-rain" title="Light rain"></i>';
 		case 2:
-			return '<i class="wi wi-rain"></i>';
+			return '<i class="wi wi-rain" title="Medium rain"></i>';
 		case 3:
-			return '<i class="wi wi-rain"></i>';
+			return '<i class="wi wi-rain" title="Hard rain"></i>';
 	}
 }
 

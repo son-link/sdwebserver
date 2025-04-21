@@ -31,7 +31,10 @@
 					Car
 				</th>
 				<th>
-					Race
+					Session
+				</th>
+				<th>
+					Weather
 				</th>
 			</tr>
 		</thead>
@@ -49,6 +52,9 @@
 					</td>
 					<td data-title="Session">
 						<?= linkTag($c->race_id, 'race', "#{$c->race_id}") ?>
+					</td>
+					<td data-title="Weather">
+						<?= weatherTag($c->wettness) ?>
 					</td>
 				</tr>
 			<?php endforeach ?>

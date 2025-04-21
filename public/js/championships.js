@@ -43,5 +43,12 @@ const dt_prev_week = new MiniDT({
 				return linkTag(row.race_id, 'race', row.race_id)
 			}
 		},
+		{
+			title: 'Weather',
+			col: 'wettness',
+			render: (row) => {
+				return weatherTag(parseInt(row.wettness))
+			}
+		},
 	],
 })

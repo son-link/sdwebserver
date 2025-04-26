@@ -104,6 +104,7 @@ class Home extends BaseController
 			$builder->where("r.timestamp BETWEEN {$date_start} AND {$date_end}");
 			$builder->where('l.car_cat', $data->car_cat);
 			$builder->where('r.track_id', $data->track_id);
+			$builder->where('l.wettness', $data->wettness);
 			$builder->groupBy(['r.user_id']);
 			$builder->orderBy('laptime');
 			$query = $builder->get();

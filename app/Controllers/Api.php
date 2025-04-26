@@ -157,6 +157,7 @@ class Api extends BaseController
 			$builder->where('r.timestamp <= ', $data->date_end);
 			$builder->where('l.car_cat', $data->car_cat);
 			$builder->where('r.track_id', $data->track_id);
+			$builder->where('l.wettness', $data->wettness);
 			$builder->orderBy('laptime');
 			$builder->groupBy(['r.user_id']);
 			$query = $builder->get();

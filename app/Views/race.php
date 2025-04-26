@@ -37,6 +37,47 @@
 			</td>
 		</tr>
 	</table>
+
+	<h1>Laps</h1>
+	<div class="table-container">
+		<table id="race-laps" class="responsive">
+			<thead>
+				<tr>
+					<th>Lap</th>
+					<th>Laptime</th>
+					<th>Position</th>
+					<th>Fuel</th>
+					<th>Valid</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach(json_decode($laps) as $i => $lap): ?>
+					<tr>
+						<td>
+							<?= $i + 1 ?>
+						</td>
+						<td>
+							<?= formatLaptime($lap->laptime) ?>
+						</td>
+						<td>
+							<?= $lap->position ?>
+						</td>
+						<td>
+							<?= $lap->fuel ?>
+						</td>
+						<td>
+							<?= ($lap->valid == 1) ? '<i class="lap-valid"></i>' : '<i class="lap-invalid"></i>' ?>
+						</td>
+					</tr>
+				<?php endforeach ?>
+			</tbody>
+		</table>
+	</div>
+
+	<table id="race-laps">
+		
+	</table>
+
 	<div>
   		<canvas id="chart"></canvas>
 	</div>

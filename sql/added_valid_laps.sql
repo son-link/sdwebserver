@@ -1,0 +1,2 @@
+ALTER TABLE `laps`
+	ADD COLUMN `valid` TINYINT NOT NULL DEFAULT 1 AFTER `wettness`;

@@ -57,6 +57,7 @@ class BestLapsModel extends BaseModel
 		$builder->join('users u', 'u.id = bl.user_id');
 		$builder->where('UNIX_TIMESTAMP(r.timestamp) >', $backto);
 		$builder->where('bl.car_cat', $carCat);
+		$builder->where('l.valid', 1);
 		$builder->groupBy(['r.track_id', 'l.wettness']);
 		if ($limit > 0) $builder->limit($limit, $offset);
 		$query = $builder->get();

@@ -147,7 +147,7 @@ class Api extends BaseController
 			$builder = $this->db->table('laps l');
 			$builder->select('l.race_id, r.track_id, r.car_id, r.user_id, r.timestamp, l.wettness');
 			$builder->select('MIN(l.laptime) AS laptime, c.name AS car_name, t.name AS track_name, u.username');
-			$builder->select('cc.name AS category_name');
+			$builder->select('cc.name AS category_name, l.valid');
 			$builder->join('races r', 'r.id = l.race_id');
 			$builder->join('cars c', 'c.id = r.car_id');
 			$builder->join('tracks t', 't.id = r.track_id');

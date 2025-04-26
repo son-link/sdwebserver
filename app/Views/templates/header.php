@@ -31,7 +31,7 @@
 		</nav>
 	</header>
 	
-	<div id="header_logo" <?= ($current_path == '/masterserver/') ? 'class="main_page"' : '' ?>>
+	<div id="header_logo" <?= ($current_path == '/masterserver/' || $current_path == '/') ? 'class="main_page"' : '' ?> style="background-image: url(<?= base_url() ?>/img/hg.jpg)">
 		<img class="logo" src="<?= base_url() ?>/img/sd-flag.png" alt="Speed Dreams logo"/>
 	</div>
 

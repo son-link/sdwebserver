@@ -81,7 +81,8 @@ header {
 }
 
 #header_logo {
-	background: url(/masterserver/img/hg.jpg) no-repeat center;
+	background-repeat: no-repeat;
+	background-position: center;
 	background-size: cover;
 	background-attachment: fixed;
 	height: 200px;

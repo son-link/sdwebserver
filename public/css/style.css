@@ -633,6 +633,14 @@ sd-carcategoryselection {
 	gap: 1rem
 }
 
+.lap-valid {
+	background: url('./icons/lap-valid.svg');
+}
+
+.lap-invalid {
+	background: url('./icons/lap-invalid.svg');
+}
+
 @media (min-width: 640px) and (max-width: 1023px) {
 	.cards > .user-card {
 		width: 45%;

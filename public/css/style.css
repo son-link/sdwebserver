@@ -633,6 +633,17 @@ sd-carcategoryselection {
 	gap: 1rem
 }
 
+/* (in)valid lap icons */
+.lap-valid,
+.lap-invalid {
+	width: 16px;
+	height: 16px;
+	
+	background-position: center;
+	background-repeat: no-repeat;
+	display: inline-block;
+}
+
 .lap-valid {
 	background: url('./icons/lap-valid.svg');
 }

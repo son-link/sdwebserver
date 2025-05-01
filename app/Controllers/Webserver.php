@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\BestLapsModel;
+use App\Models\ChampionshipsBestLapsModel;
 
 class Webserver extends BaseController
 {
@@ -157,7 +158,7 @@ class Webserver extends BaseController
 
 	private function laps($requestdata)
 	{
-		log_message('debug', json_encode($requestdata));
+		//log_message('debug', json_encode($requestdata));
 
 		// Get track and card category
 		$builder = $this->db->table('races r');
@@ -176,7 +177,7 @@ class Webserver extends BaseController
 		$insert = $myDb->insert((array) $requestdata);
 		$lap_id = $this->db->insertID();
 
-		log_message('debug', "Insert: $insert. Lap ID:  $lap_id");
+		//log_message('debug', "Insert: $insert. Lap ID:  $lap_id");
 
 		//xml
 		$laps = $this->reply->addChild('section');
@@ -184,7 +185,7 @@ class Webserver extends BaseController
 
 		$id = $laps->addChild('attnum');
 		$id->addAttribute('name', 'id');
-		$id->addAttribute('val', $this->db->insertID());
+		$id->addAttribute('val', $lap_id);
 
 		$myDb = $this->db->table('races');
 		$myDb->select('track_id, car_id, user_id');
@@ -260,6 +261,12 @@ class Webserver extends BaseController
 					}
 				}
 			}
+
+			// Update the best lap in championship
+			$chbl = new ChampionshipsBestLapsModel;
+			$requestdata->user_id = $racedata->user_id;
+			$requestdata->car_id = $racedata->car_id;
+			$chbl->setBestLap($lap_id, $requestdata);
 		}
 		
 		//xml messages

@@ -4,7 +4,7 @@ use App\Models\BaseModel;
 
 class ChampionshipsBestLapsModel extends BaseModel
 {
-	protected $table      = 'championship_bestlaps';
+	protected $table      = 'championship_bestlaps cbl';
 	protected $allowedFields = ['user_id', 'race_id', 'lap_id', 'track_id', 'car_cat', 'car_id', 'wettness', 'laptime'];
 
 	public function setBestLap($lap, $data)

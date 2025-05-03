@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 use App\Models\CarCatsModel;
+use App\Models\ChampionshipsBestLapsModel;
 use CodeIgniter\API\ResponseTrait;
 
 class Home extends BaseController
@@ -92,6 +93,7 @@ class Home extends BaseController
 			$date_start = $this->db->escape($data->date_start);
 			$date_end = $this->db->escape($data->date_end);
 
+			/*
 			$builder = $this->db->table('laps l');
 			$builder->select('l.race_id, r.track_id, r.car_id, r.user_id, r.timestamp, l.wettness');
 			$builder->select('MIN(l.laptime) AS laptime, c.name AS car_name, t.name AS track_name, u.username');
@@ -107,6 +109,29 @@ class Home extends BaseController
 			$builder->where('l.wettness', $data->wettness);
 			$builder->groupBy(['r.user_id']);
 			$builder->orderBy('laptime');
+			$query = $builder->get();
+			*/
+			
+			
+			// Los datos de las vueltas rápidas de cada jugador en cada campeonato
+			// se guardan en una tabla aparte
+			$chblModel = new ChampionshipsBestLapsModel;
+			$builder = $chblModel->builder();
+			$builder->select('cbl.race_id, cbl.track_id, cbl.car_id, cbl.user_id, r.timestamp, cbl.wettness');
+			$builder->select('cbl.laptime, c.name AS car_name, t.name AS track_name, u.username');
+			$builder->select('cc.name AS category_name, l.valid');
+			$builder->join('races r', 'r.id = cbl.race_id');
+			$builder->join('laps l', 'l.id = cbl.lap_id');
+			$builder->join('cars c', 'c.id = cbl.car_id');
+			$builder->join('tracks t', 't.id = cbl.track_id');
+			$builder->join('users u', 'u.id = cbl.user_id');
+			$builder->join('cars_cats cc', 'cc.id = cbl.car_cat');
+			$builder->where("r.timestamp BETWEEN {$date_start} AND {$date_end}");
+			$builder->where('cbl.car_cat', $data->car_cat);
+			$builder->where('cbl.track_id', $data->track_id);
+			$builder->where('cbl.wettness', $data->wettness);
+			$builder->groupBy('r.id');
+			$builder->orderBy('cbl.laptime');
 			$query = $builder->get();
 
 			if ($query && $query->getNumRows() > 0) $championships['current'] = $query->getResult();

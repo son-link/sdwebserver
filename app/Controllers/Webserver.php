@@ -196,15 +196,6 @@ class Webserver extends BaseController
 		
 		$racedata = $results->getRow();
 
-		/*
-		$myDb = $this->db->table('laps A');
-		$myDb->select('min(A.laptime) as bestlap');
-		$myDb->join('races B', 'A.race_id = B.id');
-		$myDb->where([
-			'B.car_id'		=> $racedata->car_id,
-			'B.track_id'	=> $racedata->track_id
-		]);
-		*/
 		// Get the car category
 		$bestlap = 0.000;
 		$car_cat = null;
@@ -217,7 +208,6 @@ class Webserver extends BaseController
 				'car_cat'	=> $car_cat
 			])->get(1);
 
-			//$results = $myDb->get(1);
 			if ($query && $query->getNumRows() == 1) $bestlap = $query->getRow()->laptime;
 
 			// If the lap time is less the current best lap, or don't have a best lap (0.000),

@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\BestLapsModel;
 use App\Models\CarsModel;
 use App\Models\CarCatsModel;
+use App\Models\ChampionshipsBestLapsModel;
 use App\Models\TracksModel;
 use App\Models\UsersModel;
 use CodeIgniter\API\ResponseTrait;
@@ -144,7 +145,8 @@ class Api extends BaseController
 		if ($query && $query->getNumRows() > 0)
 		{
 			$data = $query->getRow();
-			$builder = $this->db->table('laps l');
+
+			/*$builder = $this->db->table('laps l');
 			$builder->select('l.race_id, r.track_id, r.car_id, r.user_id, r.timestamp, l.wettness');
 			$builder->select('MIN(l.laptime) AS laptime, c.name AS car_name, t.name AS track_name, u.username');
 			$builder->select('cc.name AS category_name, l.valid');
@@ -160,6 +162,25 @@ class Api extends BaseController
 			$builder->where('l.wettness', $data->wettness);
 			$builder->orderBy('laptime');
 			$builder->groupBy(['r.user_id']);
+			$query = $builder->get();
+			*/
+			$chblModel = new ChampionshipsBestLapsModel;
+			$builder = $chblModel->builder();
+			$builder->select('cbl.race_id, cbl.track_id, cbl.car_id, cbl.user_id, r.timestamp, cbl.wettness');
+			$builder->select('cbl.laptime, c.name AS car_name, t.name AS track_name, u.username');
+			$builder->select('cc.name AS category_name, l.valid');
+			$builder->join('races r', 'r.id = cbl.race_id');
+			$builder->join('laps l', 'l.id = cbl.lap_id');
+			$builder->join('cars c', 'c.id = cbl.car_id');
+			$builder->join('tracks t', 't.id = cbl.track_id');
+			$builder->join('users u', 'u.id = cbl.user_id');
+			$builder->join('cars_cats cc', 'cc.id = cbl.car_cat');
+			$builder->where("r.timestamp BETWEEN '{$data->date_start}' AND '{$data->date_end}'");
+			$builder->where('cbl.car_cat', $data->car_cat);
+			$builder->where('cbl.track_id', $data->track_id);
+			$builder->where('cbl.wettness', $data->wettness);
+			$builder->groupBy('r.id');
+			$builder->orderBy('cbl.laptime');
 			$query = $builder->get();
 
 			if ($query && $query->getNumRows() > 0) $list = $query->getResult();

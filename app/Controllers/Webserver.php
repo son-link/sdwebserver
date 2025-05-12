@@ -61,6 +61,29 @@ class Webserver extends BaseController
 		//process the request
 		foreach ($xml->request as $requestype => $requestdata)
 		{
+			if ($requestype == 'races' && (property_exists($requestdata, 'user_skill') && $requestdata->user_skill != 5))
+			{
+				$login = $this->reply->addChild('section');
+				$login->addAttribute('name','races');
+
+				//xml messages
+				$messagges = $this->reply->addChild('section');
+				$messagges->addAttribute('name','messages');
+
+				$number = $messagges->addChild('attnum');
+				$number->addAttribute('name','number');
+				$number->addAttribute('val', 0);
+
+				$msg0 = $messagges->addChild('attstr');
+				$msg0->addAttribute('name','message0');
+				$msg0->addAttribute('val', "Race registration is limited to players with PRO skill level");
+
+				$domxml = new \DOMDocument('1.0');
+				$domxml->preserveWhiteSpace = false;
+				$domxml->formatOutput = true;
+				$domxml->loadXML($this->xmlreply->asXML());
+				return $this->response->setXML($domxml->saveXML());
+			}
 			if (property_exists($requestdata, 'id'))
 			{
 				//there is already an id assigned, update the old data into the database
@@ -158,7 +181,9 @@ class Webserver extends BaseController
 
 	private function laps($requestdata)
 	{
-		//log_message('debug', json_encode($requestdata));
+		if (!isset($requestdata->valid)) $requestdata->valid = 1;
+
+		if ($requestdata->race_id === 0) return;
 
 		// Get track and card category
 		$builder = $this->db->table('races r');
@@ -252,7 +277,7 @@ class Webserver extends BaseController
 				}
 			}
 
-			// Update the best lap in championship
+			// Update the best lap in championship (only if the user skill is pro (5))
 			$chbl = new ChampionshipsBestLapsModel;
 			$requestdata->user_id = $racedata->user_id;
 			$requestdata->car_id = $racedata->car_id;

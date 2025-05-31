@@ -16,6 +16,8 @@ $routes->get('login', 'Users::login');
 $routes->post('webserver', 'Webserver::index');
 $routes->get('championships', 'Home::championships');
 
+$routes->get('/weeklyracexml', 'RacexmlController::weekly');
+
 $routes->group('dashboard', static function ($routes) {
 	$routes->get('/', 'Dashboard::index', ['filter' => 'userSession']);
 	$routes->get('user', 'Dashboard::user', ['filter' => 'userSession']);

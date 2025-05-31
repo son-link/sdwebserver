@@ -73,10 +73,10 @@ class Lap_model extends Model
             AND l1.user_id = l2.user_id
             AND l1.track_id = l2.track_id
             AND l1.car_id = l2.car_id
-            AND l2.rn BETWEEN l1.rn AND l1.rn + 2
+            AND l2.rn BETWEEN l1.rn AND l1.rn + 4
           GROUP BY l1.race_id, l1.user_id, l1.username, l1.track_id, l1.car_id, l1.car_name, l1.rn
-          HAVING COUNT(*) = 3
-            AND SUM(CASE WHEN l2.valid = 1 THEN 1 ELSE 0 END) >= 2
+          HAVING COUNT(*) = 5
+            AND SUM(CASE WHEN l2.valid = 1 THEN 1 ELSE 0 END) >= 3
             AND l1.rn = 1
             AND MIN(l2.wettness) = MAX(l2.wettness)
             AND MIN(l2.wettness) = (SELECT wettness FROM current_championship)

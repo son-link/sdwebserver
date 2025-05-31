@@ -83,7 +83,7 @@
 			Laps:
 			<br />
 			<small>
-				3
+				5
 			</small>
 		</h3>
 
@@ -91,7 +91,7 @@
 			Min Valid Laps:
 			<br />
 			<small>
-				2
+				3
 			</small>
 		</h3>
 	</div>

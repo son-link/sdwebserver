@@ -47,4 +47,80 @@ class ChampionshipsBestLapsModel extends BaseModel
 			$this->insert($data);
 		}
 	}
+
+	/**
+	 * Return a list of the best lap for every user
+	 * @param string $date_start La fecha en el que comienza el campeonato
+	 * @param string $date_end La fecha en la que acaba el campeonato
+	 * @param string $track_id El ID de la pista
+	 * @param string $car_cat La categoría de los coches
+	 * @param string $wettness El tiempo
+	 * @return array Un array con los resultados
+	 */
+	public function getChampionshipData(string $date_start, string $date_end, string $track_id, string $car_cat, string $wettness): array
+	{
+		$list = [];
+		$date_start = $this->db->escape($date_start);
+		$date_end = $this->db->escape($date_end);
+		$track_id = $this->db->escape($date_end);
+		$car_cat = $this->db->escape($car_cat);
+		$wettness = $this->db->escape($wettness);
+
+		$builder = $this->builder();
+		$builder->select('cbl.race_id, cbl.track_id, cbl.car_id, cbl.user_id, r.timestamp, cbl.wettness');
+		$builder->select('cbl.laptime, c.name AS car_name, t.name AS track_name, u.username');
+		$builder->select('cc.name AS category_name, l.valid');
+		$builder->join('races r', 'r.id = cbl.race_id');
+		$builder->join('laps l', 'l.id = cbl.lap_id');
+		$builder->join('cars c', 'c.id = cbl.car_id');
+		$builder->join('tracks t', 't.id = cbl.track_id');
+		$builder->join('users u', 'u.id = cbl.user_id');
+		$builder->join('cars_cats cc', 'cc.id = cbl.car_cat');
+		$builder->where("r.timestamp BETWEEN {$date_start} AND {$date_end}");
+		$builder->where('cbl.car_cat', $car_cat);
+		$builder->where('cbl.track_id', $track_id);
+		$builder->where('cbl.wettness', $wettness);
+		$builder->groupBy('r.id');
+		$builder->orderBy('cbl.laptime');
+		$query = $builder->get();
+		
+		if ($query && $query->getNumRows() > 0) $list = $query->getResult();
+
+		return $list;
+	}
+
+	/**
+	 * Return a list of the best lap for every user
+	 * @param string $date_start La fecha en el que comienza el campeonato
+	 * @param string $date_end La fecha en la que acaba el campeonato
+	 * @param string $track_id El ID de la pista
+	 * @param string $car_cat La categoría de los coches
+	 * @param string $wettness El tiempo
+	 * @return array Un array con los resultados
+	 */
+	public function getChampionshipTotals(string $date_start, string $date_end, string $track_id, string $car_cat, string $wettness): array
+	{
+		$data = [
+			'total_races'	=> 0,
+			'total_laps'	=> 0,
+		];
+
+		$builder = $this->db->table('races r');
+		$builder->join('laps l', 'l.race_id = r.id');
+		$builder->select('COUNT(DISTINCT r.id) AS total_races, COUNT(l.id) AS total_laps');
+		$builder->where([
+			'l.car_cat'		=> $car_cat,
+			'l.track_id' 	=> $track_id,
+			'l.wettness'	=> $wettness
+		]);
+		$builder->where("r.timestamp BETWEEN {$date_start} AND {$date_end}");
+		$query = $builder->get();
+
+		if ($query && $query->getNumRows() == 1)
+		{
+			$data = $query->getRow();
+		}
+
+		return $data;
+	}
 }

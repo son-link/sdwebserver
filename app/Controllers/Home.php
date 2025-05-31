@@ -91,42 +91,18 @@ class Home extends BaseController
 		if ($query && $query->getNumRows() > 0)
 		{
 			$data = $query->getRow();
-			$chblModel = new ChampionshipsBestLapsModel;
-			/*
-			$date_start = $this->db->escape($data->date_start);
-			$date_end = $this->db->escape($data->date_end);
-			
-			// Los datos de las vueltas rápidas de cada jugador en cada campeonato
-			// se guardan en una tabla aparte
-			$chblModel = new ChampionshipsBestLapsModel;
-			$builder = $chblModel->builder();
-			$builder->select('cbl.race_id, cbl.track_id, cbl.car_id, cbl.user_id, r.timestamp, cbl.wettness');
-			$builder->select('cbl.laptime, c.name AS car_name, t.name AS track_name, u.username');
-			$builder->select('cc.name AS category_name, l.valid');
-			$builder->join('races r', 'r.id = cbl.race_id');
-			$builder->join('laps l', 'l.id = cbl.lap_id');
-			$builder->join('cars c', 'c.id = cbl.car_id');
-			$builder->join('tracks t', 't.id = cbl.track_id');
-			$builder->join('users u', 'u.id = cbl.user_id');
-			$builder->join('cars_cats cc', 'cc.id = cbl.car_cat');
-			$builder->where("r.timestamp BETWEEN {$date_start} AND {$date_end}");
-			$builder->where('cbl.car_cat', $data->car_cat);
-			$builder->where('cbl.track_id', $data->track_id);
-			$builder->where('cbl.wettness', $data->wettness);
-			$builder->groupBy('r.id');
-			$builder->orderBy('cbl.laptime');
-			$query = $builder->get();
 
-			if ($query && $query->getNumRows() > 0) $championships['current'] = $query->getResult();
+      		$championships['weeklyData'] = $data;
 
-			*/
+			$chblModel = new ChampionshipsBestLapsModel;
+
 			$championships['current'] = $chblModel->getChampionshipData($data->date_start, $data->date_end, $data->track_id, $data->car_cat, $data->wettness);
 
 			$query = $this->db->query('SELECT *, DATE_FORMAT(date_start, "%d/%m/%Y") as date_start_conv, DATE_FORMAT(date_end, "%d/%m/%Y") AS date_end_conv FROM championship WHERE id < ? ORDER BY date_end DESC', [$data->id]);
 			if ($query && $query->getNumRows() > 0) $championships['previous'] = $query->getResult();
 
 			$lapModel = new LapModel(); // Instantiate the model
-			$championships['current_races'] = $lapModel->getFastestLapWindows();
+			$championships['currentRaces'] = $lapModel->getFastestLapWindows();
 
 			echo get_header('Championships', ['minidt.css']);
 			echo view('championships', $championships);

@@ -73,10 +73,10 @@ class LapModel extends Model
             AND l1.user_id = l2.user_id
             AND l1.track_id = l2.track_id
             AND l1.car_id = l2.car_id
-            AND l2.rn BETWEEN l1.rn AND l1.rn + 4
+            AND l2.rn BETWEEN l1.rn AND l1.rn + (SELECT raceLaps FROM current_championship) - 1
           GROUP BY l1.race_id, l1.user_id, l1.username, l1.track_id, l1.car_id, l1.car_name, l1.rn
-          HAVING COUNT(*) = 5
-            AND SUM(CASE WHEN l2.valid = 1 THEN 1 ELSE 0 END) >= 3
+          HAVING COUNT(*) = (SELECT raceLaps FROM current_championship)
+            AND SUM(CASE WHEN l2.valid = 1 THEN 1 ELSE 0 END) >= (SELECT minValidLaps FROM current_championship)
             AND l1.rn = 1
             AND MIN(l2.wettness) = MAX(l2.wettness)
             AND MIN(l2.wettness) = (SELECT wettness FROM current_championship)
@@ -89,7 +89,6 @@ class LapModel extends Model
         SELECT *
         FROM best_lap_windows
         WHERE rn = 1;
-
       ";
 
       return $this->db->query($sql)->getResult();

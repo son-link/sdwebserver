@@ -5,7 +5,7 @@
 			Track:
 			<br />
 			<small>
-				<?= (!empty($current) && count($current) > 0) ? $current[0]->track_name : '' ?>
+				<?= (!empty($current) && count($current) > 0) ? $current[0]->track_name : 'No data' ?>
 			</small>
 		</h3>
 
@@ -13,7 +13,7 @@
 			Category:
 			<br />
 			<small>
-				<?= (!empty($current) && count($current) > 0) ? $current[0]->category_name : '' ?>
+				<?= (!empty($current) && count($current) > 0) ? $current[0]->category_name : 'No data' ?>
 			</small>
 		</h3>
 	</div>
@@ -38,26 +38,31 @@
 				</th>
 			</tr>
 		</thead>
-		<tbody>
-			<?php foreach($current as $c): ?>
-				<tr>
-					<td data-title="Time">
-						<?= formatLaptime($c->laptime) ?>
-					</td>
-					<td data-title="Racer">
-						<?= linkTag($c->username, 'user', $c->username) ?>
-					</td>
-					<td data-title="Car">
-						<?= linkTag($c->car_id, 'car', $c->car_name) ?>
-					</td>
-					<td data-title="Session">
-						<?= linkTag($c->race_id, 'race', "#{$c->race_id}") ?>
-					</td>
-					<td data-title="Weather">
-						<?= weatherTag($c->wettness) ?>
-					</td>
-				</tr>
-			<?php endforeach ?>
+			<?php if (!empty($current) && count($current) > 0): ?>
+				<?php foreach($current as $c): ?>
+					<tr>
+						<td data-title="Time">
+							<?= formatLaptime($c->laptime) ?>
+						</td>
+						<td data-title="Racer">
+							<?= linkTag($c->username, 'user', $c->username) ?>
+						</td>
+						<td data-title="Car">
+							<?= linkTag($c->car_id, 'car', $c->car_name) ?>
+						</td>
+						<td data-title="Session">
+							<?= linkTag($c->race_id, 'race', "#{$c->race_id}") ?>
+						</td>
+						<td data-title="Weather">
+							<?= weatherTag($c->wettness) ?>
+						</td>
+					</tr>
+				<?php endforeach ?>
+			<?php else: ?>
+				<td colspan="6" class="mini-dt nodata">
+					No data
+				</td>
+			<?php endif ?>
 		</tbody>
 	</table>
 

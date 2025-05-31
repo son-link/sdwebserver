@@ -47,4 +47,31 @@ class ChampionshipsBestLapsModel extends BaseModel
 			$this->insert($data);
 		}
 	}
+
+  public function getChampionshipData($data) {
+    $date_start = $this->db->escape($data->date_start);
+    $date_end = $this->db->escape($data->date_end);
+
+    $chblModel = new ChampionshipsBestLapsModel;
+    $builder = $chblModel->builder();
+    $builder->select('cbl.race_id, cbl.track_id, cbl.car_id, cbl.user_id, r.timestamp, cbl.wettness');
+    $builder->select('cbl.laptime, c.name AS car_name, t.name AS track_name, u.username');
+    $builder->select('cc.name AS category_name, l.valid');
+    $builder->join('races r', 'r.id = cbl.race_id');
+    $builder->join('laps l', 'l.id = cbl.lap_id');
+    $builder->join('cars c', 'c.id = cbl.car_id');
+    $builder->join('tracks t', 't.id = cbl.track_id');
+    $builder->join('users u', 'u.id = cbl.user_id');
+    $builder->join('cars_cats cc', 'cc.id = cbl.car_cat');
+    $builder->where("r.timestamp BETWEEN {$date_start} AND {$date_end}");
+    $builder->where('cbl.car_cat', $data->car_cat);
+    $builder->where('cbl.track_id', $data->track_id);
+    $builder->where('cbl.wettness', $data->wettness);
+    $builder->groupBy('r.id');
+    $builder->orderBy('cbl.laptime');
+    $query = $builder->get();
+
+    if ($query && $query->getNumRows() > 0) return $query->getResult();
+    return [];
+  }
 }

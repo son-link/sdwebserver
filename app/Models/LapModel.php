@@ -4,11 +4,11 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Lap_model extends Model
+class LapModel extends Model
 {
     protected $DBGroup = 'default';
 
-    public function get_fastest_lap_windows()
+    public function getFastestLapWindows()
     {
       $sql = "
         WITH current_championship AS (

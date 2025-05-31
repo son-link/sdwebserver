@@ -5,7 +5,7 @@
 			Track:
 			<br />
 			<small>
-				<?= (!empty($current) && count($current) > 0) ? $current[0]->track_name : '' ?>
+				<?= ($weeklyData != []) ? $weeklyData->track_id : 'No Data' ?>
 			</small>
 		</h3>
 
@@ -13,7 +13,15 @@
 			Category:
 			<br />
 			<small>
-				<?= (!empty($current) && count($current) > 0) ? $current[0]->category_name : '' ?>
+				<?= ($weeklyData != []) ? $weeklyData->car_cat : 'No Data' ?>
+			</small>
+		</h3>
+
+		<h3>
+			Weather:
+			<br />
+			<small>
+				<?= ($weeklyData != []) ? weatherTag($weeklyData->wettness) : 'No Data' ?>
 			</small>
 		</h3>
 	</div>
@@ -38,26 +46,31 @@
 				</th>
 			</tr>
 		</thead>
-		<tbody>
-			<?php foreach($current as $c): ?>
-				<tr>
-					<td data-title="Time">
-						<?= formatLaptime($c->laptime) ?>
-					</td>
-					<td data-title="Racer">
-						<?= linkTag($c->username, 'user', $c->username) ?>
-					</td>
-					<td data-title="Car">
-						<?= linkTag($c->car_id, 'car', $c->car_name) ?>
-					</td>
-					<td data-title="Session">
-						<?= linkTag($c->race_id, 'race', "#{$c->race_id}") ?>
-					</td>
-					<td data-title="Weather">
-						<?= weatherTag($c->wettness) ?>
-					</td>
-				</tr>
-			<?php endforeach ?>
+			<?php if (!empty($current) && count($current) > 0): ?>
+				<?php foreach($current as $c): ?>
+					<tr>
+						<td data-title="Time">
+							<?= formatLaptime($c->laptime) ?>
+						</td>
+						<td data-title="Racer">
+							<?= linkTag($c->username, 'user', $c->username) ?>
+						</td>
+						<td data-title="Car">
+							<?= linkTag($c->car_id, 'car', $c->car_name) ?>
+						</td>
+						<td data-title="Session">
+							<?= linkTag($c->race_id, 'race', "#{$c->race_id}") ?>
+						</td>
+						<td data-title="Weather">
+							<?= weatherTag($c->wettness) ?>
+						</td>
+					</tr>
+				<?php endforeach ?>
+			<?php else: ?>
+				<td colspan="6" class="mini-dt nodata">
+					No data
+				</td>
+			<?php endif ?>
 		</tbody>
 	</table>
 
@@ -67,7 +80,7 @@
 			Track:
 			<br />
 			<small>
-				<?= (!empty($current) && count($current) > 0) ? $current[0]->track_name : '' ?>
+				<?= ($weeklyData != []) ? $weeklyData->track_id : 'No Data' ?>
 			</small>
 		</h3>
 
@@ -75,7 +88,7 @@
 			Category:
 			<br />
 			<small>
-				<?= (!empty($current) && count($current) > 0) ? $current[0]->category_name : '' ?>
+				<?= ($weeklyData != []) ? $weeklyData->car_cat : 'No Data' ?>
 			</small>
 		</h3>
 
@@ -83,7 +96,7 @@
 			Laps:
 			<br />
 			<small>
-				5
+				<?= ($weeklyData != []) ? $weeklyData->raceLaps : 'No Data' ?>
 			</small>
 		</h3>
 
@@ -91,7 +104,7 @@
 			Min Valid Laps:
 			<br />
 			<small>
-				3
+				<?= ($weeklyData != []) ? $weeklyData->minValidLaps : 'No Data' ?>
 			</small>
 		</h3>
 	</div>
@@ -117,7 +130,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach($current_races as $c): ?>
+			<?php foreach($currentRaces as $c): ?>
 				<tr>
 					<td data-title="Time">
 						<?= formatLaptime($c->total_laptime) ?>

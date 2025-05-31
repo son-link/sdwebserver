@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\CarCatsModel;
 use App\Models\ChampionshipsBestLapsModel;
 use CodeIgniter\API\ResponseTrait;
+use App\Models\Lap_model; // 👈 Add this if not already present
 
 class Home extends BaseController
 {
@@ -138,6 +139,9 @@ class Home extends BaseController
 
 			$query = $this->db->query('SELECT *, DATE_FORMAT(date_start, "%d/%m/%Y") as date_start_conv, DATE_FORMAT(date_end, "%d/%m/%Y") AS date_end_conv FROM championship WHERE id < ? ORDER BY date_end DESC', [$data->id]);
 			if ($query && $query->getNumRows() > 0) $championships['previous'] = $query->getResult();
+
+      $lapModel = new Lap_model(); // Instantiate the model
+      $championships['current_races'] = $lapModel->get_fastest_lap_windows();
 
 			echo get_header('Championships', ['minidt.css']);
 			echo view('championships', $championships);

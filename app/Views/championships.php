@@ -34,6 +34,8 @@
 		</h3>
 	</div>
 
+  <center><h2>Race Stint Challenge</h2></center>
+
 	<table id="current_week_races" class="responsive">
 		<thead>
 			<tr>
@@ -71,6 +73,47 @@
 					</td>
 					<td data-title="Valid Laps">
 						<?= $c->valid_laps; ?>
+					</td>
+				</tr>
+			<?php endforeach ?>
+		</tbody>
+	</table>
+
+  <br>
+
+  <center><h2>Hotlap Challenge</h2></center>
+
+	<table id="current_week_hotlaps" class="responsive">
+		<thead>
+			<tr>
+				<th>
+					Lap Time
+				</th>
+				<th>
+					Racer
+				</th>
+				<th>
+					Car
+				</th>
+				<th>
+					Session
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php foreach($currentHotlap as $c): ?>
+				<tr>
+					<td data-title="Time">
+						<?= formatLaptime($c->laptime) ?>
+					</td>
+					<td data-title="Racer">
+						<?= linkTag($c->username, 'user', $c->username) ?>
+					</td>
+					<td data-title="Car">
+						<?= linkTag($c->car_id, 'car', $c->car_name) ?>
+					</td>
+					<td data-title="Session">
+						<?= linkTag($c->race_id, 'race', "#{$c->race_id}") ?>
 					</td>
 				</tr>
 			<?php endforeach ?>

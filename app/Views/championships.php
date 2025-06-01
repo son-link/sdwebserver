@@ -18,7 +18,15 @@
 		</h3>
 
 		<h3>
-			Laps:
+			Weather:
+			<br />
+			<small>
+				<?= ($weeklyData != []) ? weatherTag($weeklyData->wettness) : 'No Data' ?>
+			</small>
+		</h3>
+
+		<h3>
+			Stint Race Laps:
 			<br />
 			<small>
 				<?= ($weeklyData != []) ? $weeklyData->raceLaps : 'No Data' ?>
@@ -26,7 +34,7 @@
 		</h3>
 
 		<h3>
-			Min Valid Laps:
+			Stint Race Min Valid Laps:
 			<br />
 			<small>
 				<?= ($weeklyData != []) ? $weeklyData->minValidLaps : 'No Data' ?>

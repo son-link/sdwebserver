@@ -84,7 +84,8 @@ class Home extends BaseController
 		$championships = [
 			'weeklyData'	=> [],
 			'previous'		=> [],
-			'currentRaces'	=> []
+			'currentRaces'	=> [],
+			'currentHotlap'	=> [],
 		];
 
 		// Get the current championship
@@ -100,6 +101,9 @@ class Home extends BaseController
 
 			$lapModel = new LapModel(); // Instantiate the model
 			$championships['currentRaces'] = $lapModel->getFastestLapWindows();
+      
+      $hotlapModel = new ChampionshipsBestLapsModel();
+			$championships['currentHotlap'] = $hotlapModel->getChampionshipBestsLaps($data);
 
 			echo get_header('Championships', ['minidt.css']);
 			echo view('championships', $championships);

@@ -82,8 +82,9 @@ class Home extends BaseController
 	public function championships()
 	{
 		$championships = [
-			'current'	=> [],
-			'previous'	=> []
+			'weeklyData'	=> [],
+			'previous'		=> [],
+			'currentRaces'	=> []
 		];
 
 		// Get the current championship
@@ -93,10 +94,6 @@ class Home extends BaseController
 			$data = $query->getRow();
 
       		$championships['weeklyData'] = $data;
-
-			$chblModel = new ChampionshipsBestLapsModel;
-
-			$championships['current'] = $chblModel->getChampionshipData($data->date_start, $data->date_end, $data->track_id, $data->car_cat, $data->wettness);
 
 			$query = $this->db->query('SELECT *, DATE_FORMAT(date_start, "%d/%m/%Y") as date_start_conv, DATE_FORMAT(date_end, "%d/%m/%Y") AS date_end_conv FROM championship WHERE id < ? ORDER BY date_end DESC', [$data->id]);
 			if ($query && $query->getNumRows() > 0) $championships['previous'] = $query->getResult();

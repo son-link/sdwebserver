@@ -47,13 +47,12 @@ class ChampionshipsBestLapsModel extends BaseModel
 		}
 	}
 
-	public function getChampionshipData($data)
+	public function getChampionshipBestsLaps($data)
 	{
 		$date_start = $this->db->escape($data->date_start);
 		$date_end = $this->db->escape($data->date_end);
 
-		$chblModel = new ChampionshipsBestLapsModel;
-		$builder = $chblModel->builder();
+		$builder = $this->builder();
 		$builder->select('cbl.race_id, cbl.track_id, cbl.car_id, cbl.user_id, r.timestamp, cbl.wettness');
 		$builder->select('cbl.laptime, c.name AS car_name, t.name AS track_name, u.username');
 		$builder->select('cc.name AS category_name, l.valid');

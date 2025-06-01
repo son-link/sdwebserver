@@ -44,6 +44,11 @@
 	text-align: right;
 }
 
+.mini-dt .nodata {
+	text-align: center;
+	font-weight: bold;
+}
+
 .pagination {
 	display: flex;
 	align-items: center;

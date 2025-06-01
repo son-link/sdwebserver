@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 
-class LapModel extends Model
+class LapModel extends BaseModel
 {
     protected $DBGroup = 'default';
 

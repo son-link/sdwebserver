@@ -102,7 +102,7 @@ class Home extends BaseController
 			$lapModel = new LapModel(); // Instantiate the model
 			$championships['currentRaces'] = $lapModel->getFastestLapWindows();
       
-      $hotlapModel = new ChampionshipsBestLapsModel();
+      		$hotlapModel = new ChampionshipsBestLapsModel();
 			$championships['currentHotlap'] = $hotlapModel->getChampionshipBestsLaps($data);
 
 			echo get_header('Championships', ['minidt.css']);

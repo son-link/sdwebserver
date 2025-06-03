@@ -18,7 +18,15 @@
 		</h3>
 
 		<h3>
-			Laps:
+			Weather:
+			<br />
+			<small>
+				<?= ($weeklyData != []) ? weatherTag($weeklyData->wettness) : 'No Data' ?>
+			</small>
+		</h3>
+
+		<h3>
+			Stint Race Laps:
 			<br />
 			<small>
 				<?= ($weeklyData != []) ? $weeklyData->raceLaps : 'No Data' ?>
@@ -26,13 +34,15 @@
 		</h3>
 
 		<h3>
-			Min Valid Laps:
+			Stint Race Min Valid Laps:
 			<br />
 			<small>
 				<?= ($weeklyData != []) ? $weeklyData->minValidLaps : 'No Data' ?>
 			</small>
 		</h3>
 	</div>
+
+	<h2 class="text-center">Race Stint Challenge</h2>
 
 	<table id="current_week_races" class="responsive">
 		<thead>
@@ -55,7 +65,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach($currentRaces as $c): ?>
+			<?php foreach ($currentRaces as $c): ?>
 				<tr>
 					<td data-title="Time">
 						<?= formatLaptime($c->total_laptime) ?>
@@ -77,12 +87,53 @@
 		</tbody>
 	</table>
 
+	<br>
+
+	<h2 class="text-center">Hotlap Challenge</h2>
+
+	<table id="current_week_hotlaps" class="responsive">
+		<thead>
+			<tr>
+				<th>
+					Lap Time
+				</th>
+				<th>
+					Racer
+				</th>
+				<th>
+					Car
+				</th>
+				<th>
+					Session
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php foreach ($currentHotlap as $c): ?>
+				<tr>
+					<td data-title="Time">
+						<?= formatLaptime($c->laptime) ?>
+					</td>
+					<td data-title="Racer">
+						<?= linkTag($c->username, 'user', $c->username) ?>
+					</td>
+					<td data-title="Car">
+						<?= linkTag($c->car_id, 'car', $c->car_name) ?>
+					</td>
+					<td data-title="Session">
+						<?= linkTag($c->race_id, 'race', "#{$c->race_id}") ?>
+					</td>
+				</tr>
+			<?php endforeach ?>
+		</tbody>
+	</table>
+
 	<!-- all races from this driver -->
 	<h1>Previous weeks</h1>
 	<div id="week-selector">
 		<select id="select-week">
 			<option disabled selected>Select week</option>
-			<?php foreach($previous as $p): ?>
+			<?php foreach ($previous as $p): ?>
 				<option value="<?= $p->id ?>">
 					<?= "{$p->date_start_conv} - {$p->date_end_conv}" ?>
 				</option>

@@ -42,7 +42,7 @@
 		</h3>
 	</div>
 
-  <center><h2>Race Stint Challenge</h2></center>
+	<h2 class="text-center">Race Stint Challenge</h2>
 
 	<table id="current_week_races" class="responsive">
 		<thead>
@@ -65,7 +65,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach($currentRaces as $c): ?>
+			<?php foreach ($currentRaces as $c): ?>
 				<tr>
 					<td data-title="Time">
 						<?= formatLaptime($c->total_laptime) ?>
@@ -87,9 +87,9 @@
 		</tbody>
 	</table>
 
-  <br>
+	<br>
 
-  <center><h2>Hotlap Challenge</h2></center>
+	<h2 class="text-center">Hotlap Challenge</h2>
 
 	<table id="current_week_hotlaps" class="responsive">
 		<thead>
@@ -109,7 +109,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach($currentHotlap as $c): ?>
+			<?php foreach ($currentHotlap as $c): ?>
 				<tr>
 					<td data-title="Time">
 						<?= formatLaptime($c->laptime) ?>
@@ -133,7 +133,7 @@
 	<div id="week-selector">
 		<select id="select-week">
 			<option disabled selected>Select week</option>
-			<?php foreach($previous as $p): ?>
+			<?php foreach ($previous as $p): ?>
 				<option value="<?= $p->id ?>">
 					<?= "{$p->date_start_conv} - {$p->date_end_conv}" ?>
 				</option>

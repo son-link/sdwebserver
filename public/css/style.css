@@ -652,6 +652,23 @@ sd-carcategoryselection {
 	background: url('./icons/lap-invalid.svg');
 }
 
+/* Utilities */
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.float-left {
+  float: left;
+}
+
 @media (min-width: 640px) and (max-width: 1023px) {
 	.cards > .user-card {
 		width: 45%;

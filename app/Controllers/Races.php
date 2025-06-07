@@ -36,6 +36,7 @@ class Races extends BaseController
 		$tplData['race'] =  $query->getRow();
 		$builder = $this->db->table('laps');
 		$builder->where('race_id', $tplData['race']->id);
+		$builder->orderBy('id');
 		$query = $builder->get();
 			
 		$tplData['race']->n_laps = 0;

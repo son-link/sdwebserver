@@ -188,14 +188,16 @@ class Webserver extends BaseController
 		// Get track and card category
 		$builder = $this->db->table('races r');
 		$builder->join('cars_cats cc', 'cc.carID = r.car_id');
-		$builder->select('r.track_id, cc.id AS car_cat');
+		$builder->select('r.track_id, cc.id AS car_cat, r.car_id');
 		$builder->where('r.id', $requestdata->race_id);
 		$query = $builder->get(1);
+
 		if ($query && $query->getNumRows() == 1)
 		{
 			$result = $query->getRow();
 			$requestdata->track_id = $result->track_id;
 			$requestdata->car_cat = $result->car_cat;
+			$requestdata->car_id = $result->car_id;
 		}
 
 		$myDb = $this->db->table('laps');

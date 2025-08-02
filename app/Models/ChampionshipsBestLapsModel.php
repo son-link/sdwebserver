@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
+use CodeIgniter\I18n\Time;
 
 class ChampionshipsBestLapsModel extends BaseModel
 {
@@ -49,6 +50,19 @@ class ChampionshipsBestLapsModel extends BaseModel
 
 	public function getChampionshipBestsLaps($data)
 	{
+		$cache_folder = WRITEPATH . '/cache/bestlaps';
+		if (!file_exists($cache_folder)) mkdir($cache_folder, 0777, true);
+
+		$cache_file = "$cache_folder/{$data->date_start}-{$data->date_end}.json";
+
+		// If there is a file with the cache, we return its contents
+		if (is_file($cache_file))
+		{
+			$fp = fopen($cache_file, 'r');
+			$content = fread($fp, filesize($cache_file));
+			return json_decode($content);
+		}
+
 		$date_start = $this->db->escape($data->date_start);
 		$date_end = $this->db->escape($data->date_end);
 
@@ -70,7 +84,27 @@ class ChampionshipsBestLapsModel extends BaseModel
 		$builder->orderBy('cbl.laptime');
 		$query = $builder->get();
 
-		if ($query && $query->getNumRows() > 0) return $query->getResult();
-		return [];
+		$list = [];
+
+		if ($query && $query->getNumRows() > 0) $list = $query->getResult();
+
+		// If the start and end dates are greater than the current date,
+		// we will obtain data from previous championships.
+		// If this is the case, we store it in cache.
+
+		$now = new Time('now');
+		$comp_date_start = Time::createFromFormat('Y-m-d H:i:s', $data->date_start);
+		$comp_date_end = Time::createFromFormat('Y-m-d H:i:s', $data->date_end);
+		
+		if ($comp_date_start->isBefore($now) && $comp_date_end->isBefore($now))
+		{
+			if (!file_exists($cache_file))
+			{
+				$fp = fopen($cache_file, 'w');
+				fwrite($fp, json_encode($list));
+			}
+		}
+
+		return $list;
 	}
 }

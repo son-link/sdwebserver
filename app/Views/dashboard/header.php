@@ -19,9 +19,8 @@
 		<a href="<?= base_url() ?>/dashboard/races"><i class="sd-sports"></i>Races</a>
 		<a href="<?= base_url() ?>/dashboard/logout"><i class="sd-logout"></i>Logout</a>
 	</nav>
-	
-	<header>
-		<h3><?=$title?></h3>
-	</header>
 
 	<div id="dashboard" class="col-10">
+		<header class="dashboard-header">
+			<h3><?=$title?></h3>
+		</header>

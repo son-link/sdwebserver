@@ -436,6 +436,17 @@ sd-carcategoryselection {
 	transition: all .3s ease;
 }
 
+.cards > .dashboard-card {
+	width: 48%;
+	border-radius: 5px;
+	padding: .5rem;
+	box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+	margin-bottom: 1rem;
+	text-decoration: none;
+	color: #4a4a4a;
+	transition: all .3s ease;
+}
+
 .cards > .user-card:hover {
 	background-color: #4a4a4a;
 	color: #fff;
@@ -465,6 +476,9 @@ sd-carcategoryselection {
 
 .card-body {
 	width: 55%;
+}
+.dashboard-card .card-body {
+	width: 100%;
 }
 
 .card-body .body-title {
@@ -760,7 +774,8 @@ sd-carcategoryselection {
 	  	background-color: #DDDDDD;
 	}
 
-	.cards > .user-card {
+	.cards > .user-card,
+	.cards > .dashboard-card {
 		width: 90%;
 		margin-bottom: 1rem;
 	}

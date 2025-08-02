@@ -30,9 +30,53 @@ class Dashboard extends BaseController
 
     public function index()
     {
-		//$users = $this->users->getUsers();
-		$tplData = [];
-		//$tplData['users'] = $users;
+		$tplData = [
+			'total_laps'	=> 0,
+			'total_races'	=> 0
+		];
+
+		// Get count of all races and laps of user
+		$builder = $this->db->table('races r');
+		$builder->select('COUNT(r.id) AS total_races');
+		$builder->select('SUM(
+				(SELECT COUNT(*) FROM laps l
+				WHERE l.race_id = r.id)
+			) AS total_laps');
+		$builder->where('r.user_id', $this->session->userid);
+		$query = $builder->get();
+		
+		if ($query)
+		{
+			$data = $query->getRow();
+			$tplData = array_merge($tplData, (array) $data);
+		}
+
+		// Get the 3 most used cars
+		$builder->resetQuery();
+		$builder->select('COUNT(c.id) AS total_used, r.car_id, c.name AS car_name');
+		$builder->join('cars c', 'c.id = r.car_id');
+		$builder->where('r.user_id', $this->session->userid);
+		$builder->groupBy('c.id');
+		$builder->orderBy('total_used DESC');
+		$query = $builder->get(3);
+
+		if ($query) $tplData['most_used_cars'] = $query->getResult();
+
+		// Get the 3 most used tracks
+		$builder->resetQuery();
+		$builder->select('COUNT(t.id) AS total_used, r.track_id, t.name AS track_name');
+		$builder->select('SUM(
+				(SELECT COUNT(*) FROM laps l
+				WHERE l.race_id = r.id)
+			) AS total_laps');
+		$builder->join('tracks t', 't.id = r.track_id');
+		$builder->where('r.user_id', $this->session->userid);
+		$builder->groupBy('t.id');
+		$builder->orderBy('total_used DESC');
+		$query = $builder->get(3);
+
+		if ($query) $tplData['most_used_tracks'] = $query->getResult();
+
 		echo get_header('Dashboard', [], true);
 		echo view('dashboard/main.php', $tplData);
 		echo get_footer(['dashboard.js']);
@@ -47,7 +91,6 @@ class Dashboard extends BaseController
 
 	public function user()
 	{
-		//$userid = $this->session->userid;
 		$user = $this->usersModel->find($this->session->userid);
 
 		echo get_header("My User", [], true);

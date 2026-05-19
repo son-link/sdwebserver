@@ -1,11 +1,15 @@
 CREATE TABLE `laps` (
   `id` int(11) NOT NULL,
   `race_id` int(11) NOT NULL,
+  `track_id` varchar(100) NOT NULL,
+  `car_cat` varchar(50) NOT NULL,
+  `car_id` varchar(100) NOT NULL,
   `laptime` double NOT NULL,
   `fuel` double NOT NULL,
   `position` int(5) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
-  `wettness` int(2) NOT NULL
+  `wettness` int(2) NOT NULL,
+  `valid` int(1) NOT NULL,
 ) ENGINE=MyISAM;
 
 CREATE TABLE `races` (

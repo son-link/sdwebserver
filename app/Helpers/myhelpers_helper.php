@@ -144,6 +144,10 @@ function formatLaptime($seconds)
 	$seconds = $seconds *1;
 	$str='';
 
+	if ($seconds < 0)
+		$str.="-";
+
+	$seconds = abs($seconds);
 	//minuti
 	$str.= sprintf('%02d', ($seconds/60)).':';
 	$seconds = fmod($seconds, 60);

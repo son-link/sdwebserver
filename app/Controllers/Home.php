@@ -68,7 +68,7 @@ class Home extends BaseController
 		$tplData['carCatId'] = $carCatId;
 
 		// Get cars categories
-		$categoriesList = $carCatModel->select('id, name, count(carId) as totalCars')->groupBy('id')->findAll();
+		$categoriesList = $carCatModel->select('id, name, count(carId) as totalCars')->groupBy('name')->orderBy('name')->findAll();
 		$currCat = $carCatModel->find($carCatId);
 
 		$tplData['currCat'] = $currCat;

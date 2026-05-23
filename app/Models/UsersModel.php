@@ -9,7 +9,7 @@ class UsersModel extends BaseModel
 {
 	protected $table      = 'users';
 	protected $allowedFields = ['username', 'email', 'password',  'img', 'nation', 'registrationdate',
-		'sessionid', 'sessionip', 'sessiontimestamp', 'level'
+		'sessionid', 'sessionip', 'sessiontimestamp'
 	];
 
 	public $id;
@@ -374,7 +374,7 @@ class UsersModel extends BaseModel
 	public function login($data)
 	{
 		$builder = $this->builder();
-		$builder->select('id, password, level, username');
+		$builder->select('id, password, username');
 		$builder->where('username', $data['username']);
 		$query = $builder->get(1);
 		if ($query && $query->getNumRows() == 1)
@@ -384,7 +384,6 @@ class UsersModel extends BaseModel
 			{
 				$sessiondata = [
 					'userid'	=> $user->id,
-					'userlevel'	=> $user->level,
 					'username'	=> $user->username,
 					'logged_in'	=> true
 				];

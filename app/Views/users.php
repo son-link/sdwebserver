@@ -7,7 +7,9 @@
 					<?= $user->username ?>
 				</div>
 				<div class="card-img">
-					<img src="<?=base_url()?>img/users/<?=$user->img?>">
+					<img src="<?php
+						if (!empty($user->img)) echo base_url("img/users/{$user->img}");
+						else echo base_url("img/user.png"); ?>">
 				</div>
 			</div>
 			<div class="card-body">

@@ -6,7 +6,11 @@
 <div class="container">
 	<div id="user-header">
 		<div id="user-img">
-			<img class="avatar" src="<?= base_url("img/users/{$user->img}") ?>" alt="<?= $user->username ?>">
+			<img class="avatar"
+			src="<?php
+				if (!empty($user->img)) echo base_url("img/users/{$user->img}");
+				else echo base_url("img/user.png"); ?>"
+				alt="<?= $user->username ?>">
 		</div>
 		<div id="user-info">
 			<div>

@@ -19,10 +19,10 @@ $('#login-form').on('submit', function(e) {
 $('#user-edit-form > form').on('submit', function(e) {
 	e.preventDefault()
 
-	const formData = new FormData(this);
+	const form_data = new FormData(this);
 	if (!$('#imginput').val()) form_data.delete('imginput')
 
-	axios.post(`${base_url}/dashboard/update_user`, formData)
+	axios.post(`${base_url}/dashboard/update_user`, form_data)
 		.then( resp => {
 			if (resp.data) window.location.reload()
 		})

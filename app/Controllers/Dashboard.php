@@ -143,11 +143,11 @@ class Dashboard extends BaseController
 					$avatar = FCPATH . '/img/users/'. $userData->img;
 					$oldAvatarFile = new \CodeIgniter\Files\File($avatar);
 					if ($oldAvatarFile->getExtension() != $ext && file_exists($avatar)) unlink($avatar);
-
-					$filename = "{$this->session->username}.$ext";
-					$move = $file->move(FCPATH . '/img/users/', $filename, true);
-					if ($move) $update = $this->usersModel->update($this->session->userid, (object) ['img' => $filename]);
 				}
+
+				$filename = "{$this->session->username}.$ext";
+				$move = $file->move(FCPATH . '/img/users/', $filename, true);
+				if ($move) $update = $this->usersModel->update($this->session->userid, (object) ['img' => $filename]);
 			}
     	}
 

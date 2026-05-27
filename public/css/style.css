@@ -598,7 +598,8 @@ sd-carcategoryselection {
 	display: block;
 }
 
-#login-form button {
+#login-form button,
+button[type=submit] {
 	display: block;
 	background-color: #13aff0;
 	border: 0;
@@ -607,6 +608,10 @@ sd-carcategoryselection {
 	border-radius: 3px;
 	color: #fff;
 	margin: .5rem auto;
+}
+
+button[type=submit] {
+	margin: .5rem 0;
 }
 
 #login-error {

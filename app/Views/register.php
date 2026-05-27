@@ -264,7 +264,7 @@
 
 			<div class="register-right">
 				<label>Profile image</label>
-				<input type="file" name="imginput" id="imginput" required />
+				<input type="file" name="imginput" id="imginput" />
 				<img src="<?= base_url() ?>/img/user.svg" id="profile-img">
 
 				<label>Resolve the captcha</label>

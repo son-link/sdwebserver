@@ -26,9 +26,8 @@ $('#refresh-captcha').on('click', function() {
 	$().ajax(
 		`${base_url}/register/new_captcha`,
 		{
-			'dataType': 'text',
 			'success': function(res) {
-				$("#captcha").attr('src', res);
+				$("#captcha").attr('src', res.captcha);
 			}
 		}
 	);
@@ -47,13 +46,15 @@ $('#reg-form > form').on('submit', function(e) {
 	} else {
 		const form_data = new FormData(this);
 
+		// Remove the image if isn't selected
+		if (!$('#imginput').val()) form_data.delete('imginput');
+
 		$().ajax(`${base_url}/register/newuser`, {
 			type: 'POST',
 			data: form_data,
 			success: (resp) => {
-				if (resp.ok) {
-					location.href = `${base_url}/register/ok`;
-				} else {
+				if (resp.ok) location.href = `${base_url}/register/ok`;
+				else {
 					$('#register-error').text(resp.msg);
 					$('#register-error').show();
 				}

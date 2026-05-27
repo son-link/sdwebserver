@@ -258,7 +258,7 @@
 				<input type="file" name="imginput" id="imginput" />
 			</div>
 			<div class="col-12">
-				<img src="<?= base_url() . "/img/users/{$user->img}" ?>" id="profile-img">
+				<img src="<?= $user->img ?>" id="profile-img">
 			</div>
 		</div>
 		<div class="register-right">

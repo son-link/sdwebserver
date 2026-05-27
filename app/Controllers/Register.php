@@ -41,6 +41,10 @@ class Register extends BaseController
 			$this->session->has('phrase') &&
 			PhraseBuilder::comparePhrases($this->session->phrase, $data['phrase'])
 		) {
+			// Now we check if the user and/or email is already in use.
+			if ($this->users->compUser($data['username'], $data['email']))
+				$response['msg'] = 'Username and/or email is already in use';
+
             // Move the image
 			$file = $this->request->getFile('imginput');
 			if ($file)
@@ -49,19 +53,12 @@ class Register extends BaseController
 				$ext = $file->guessExtension();
 
 				if ($ext != $file->getExtension()) $response['msg'] = 'The image is not valid';
-				else
-				{
-					// Now we check if the user and/or email is already in use.
-					if ($this->users->compUser($data['username'], $data['email']))
-						$response['msg'] = 'Username and/or email is already in use';
-					else $response = $this->users->addUser($data, $file);
-				}
 			}
+
+			$response = $this->users->addUser($data, $file);
         }
-		else
-		{
-           $response['msg'] = 'Captcha not valid';
-        }
+		else $response['msg'] = 'Captcha not valid';
+
 		return $this->respond($response);
 	}
 
@@ -69,7 +66,7 @@ class Register extends BaseController
 	{
 		$this->captcha->build();
 		$this->session->phrase = $this->captcha->getPhrase();	
-		return $this->captcha->inline();
+		return $this->respond(['captcha' => $this->captcha->inline()]);
 	}
 
 	public function ok()

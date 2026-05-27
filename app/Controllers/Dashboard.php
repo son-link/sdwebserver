@@ -93,6 +93,10 @@ class Dashboard extends BaseController
 	{
 		$user = $this->usersModel->find($this->session->userid);
 
+		$user->img = (!empty($user->img))
+			? base_url("/img/users/{$user->img}")
+			: base_url('/img/user.svg');
+
 		echo get_header("My User", [], true);
 		echo view('dashboard/user', ['user' => $user]);
 		echo get_footer(['dashboard.js']);
@@ -131,16 +135,19 @@ class Dashboard extends BaseController
 			if ($ext != strtolower($file->getExtension())) $response['msg'] = 'The image is not valid';
 			else
 			{
-
 				// First, get the current avatar filnename, and delete if the extension is different
 				$userData = $this->usersModel->getUser($this->session->username);
-				$avatar = FCPATH . '/img/users/'. $userData->img;
-				$oldAvatarFile = new \CodeIgniter\Files\File($avatar);
-				if ($oldAvatarFile->getExtension() != $ext && file_exists($avatar)) unlink($avatar);
 
-				$filename = "{$this->session->username}.$ext";
-				$move = $file->move(FCPATH . '/img/users/', $filename, true);
-				if ($move) $update = $this->usersModel->update($this->session->userid, (object) ['img' => $filename]);
+				if (!empty($userData->img))
+				{
+					$avatar = FCPATH . '/img/users/'. $userData->img;
+					$oldAvatarFile = new \CodeIgniter\Files\File($avatar);
+					if ($oldAvatarFile->getExtension() != $ext && file_exists($avatar)) unlink($avatar);
+
+					$filename = "{$this->session->username}.$ext";
+					$move = $file->move(FCPATH . '/img/users/', $filename, true);
+					if ($move) $update = $this->usersModel->update($this->session->userid, (object) ['img' => $filename]);
+				}
 			}
     	}
 

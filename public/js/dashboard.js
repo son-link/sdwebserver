@@ -20,6 +20,7 @@ $('#user-edit-form > form').on('submit', function(e) {
 	e.preventDefault()
 
 	const formData = new FormData(this);
+	if (!$('#imginput').val()) form_data.delete('imginput')
 
 	axios.post(`${base_url}/dashboard/update_user`, formData)
 		.then( resp => {

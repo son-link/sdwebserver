@@ -361,9 +361,14 @@ class UsersModel extends BaseModel
 				$id = $this->db->insertID();
 				//$builder->resetQuery();
 				// Move the file to it's new home
-				$filename =  $user['username'] . '.' . $image->getExtension();
-				$image->move(ROOTPATH . '/public/img/users/', $filename);$image->move(ROOTPATH . '/public/img/users/', $filename, true);
-				$this->where('id', $id)->set(['img' => $filename])->update();
+				if ($image)
+				{
+					$filename =  $user['username'] . '.' . $image->getExtension();
+					$image->move(ROOTPATH . '/public/img/users/', $filename);
+					$image->move(ROOTPATH . '/public/img/users/', $filename, true);
+					$this->where('id', $id)->set(['img' => $filename])->update();
+				}
+				
 				$response['ok'] = true;
 			}
 		}
